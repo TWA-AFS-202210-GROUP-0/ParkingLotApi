@@ -96,6 +96,29 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Contains("Parking Lot 20", parkingLotsName);
         }
 
+        [Fact]
+        public async Task Should_get_parking_lot_by_id_success()
+        {
+            var client = GetClient();
+            var parkingLot = new ParkingLotDto
+            {
+                Name = "ParkingLotA",
+                Capacity = 50,
+                Location = "Street A",
+            };
+            var parkingLotContent = BuildRequestBody(parkingLot);
+            var response = await client.PostAsync("/parkingLots", parkingLotContent);
+
+
+            // when 
+            var parkingLotResponse = await client.GetAsync(response.Headers.Location);
+
+            // then
+            Assert.Equal(HttpStatusCode.OK, parkingLotResponse.StatusCode);
+            var parkingLotGet = await DeserializeResponse<ParkingLotDto>(response);
+            Assert.Equivalent(parkingLot, parkingLotGet); 
+        }
+
         private static StringContent BuildRequestBody<T>(T requestObject)
         {
             var requestJson = JsonConvert.SerializeObject(requestObject);

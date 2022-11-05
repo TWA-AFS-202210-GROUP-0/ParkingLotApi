@@ -39,7 +39,7 @@ namespace ParkingLotApi.Services
         public async Task DeleteParkingLot(int id)
         {
             var foundParkingLot = parkingLotContext.ParkingLots
-                .FirstOrDefault(_ => _.Id == id);
+                .FirstOrDefault(_ => _.Id.Equals(id));
             parkingLotContext.ParkingLots.Remove(foundParkingLot);
             await parkingLotContext.SaveChangesAsync();
         }
@@ -52,6 +52,13 @@ namespace ParkingLotApi.Services
             int pageIndexCount = Math.Min(pageSize, parkingLotCount - (pageIndex - 1) * pageSize);
             var parkingLots = parkingLotContext.ParkingLots.OrderBy(_ => _.Id).ToList().GetRange(beginIndex, pageIndexCount);
             return parkingLots.Select(parkingLot => new ParkingLotNoLocationDto(parkingLot)).ToList();
+        }
+
+        public async Task<ParkingLotDto> GetParkingLotById(int id)
+        {
+            var foundParkingLot = parkingLotContext.ParkingLots
+                .FirstOrDefault(_ => _.Id.Equals(id));
+            return new ParkingLotDto(foundParkingLot);
         }
     }
 }

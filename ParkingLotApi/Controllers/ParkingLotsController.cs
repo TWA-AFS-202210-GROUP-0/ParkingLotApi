@@ -53,4 +53,11 @@ public class ParkingLotsController : ControllerBase
         return Ok(parkingLotNoLocationDtos);
         
     }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ParkingLotDto>> GetById([FromRoute] int id)
+    {
+        var parkingLotDto = await parkingLotService.GetParkingLotById(id);
+        return Ok(parkingLotDto);
+    }
 }
