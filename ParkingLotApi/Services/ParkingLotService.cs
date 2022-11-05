@@ -34,5 +34,13 @@ namespace ParkingLotApi.Services
             await parkingLotContext.SaveChangesAsync();
             return parkingLotEntity.Id;
         }
+
+        public async Task DeleteParkingLot(int id)
+        {
+            var foundParkingLot = parkingLotContext.ParkingLots
+                .FirstOrDefault(_ => _.Id == id);
+            parkingLotContext.ParkingLots.Remove(foundParkingLot);
+            await parkingLotContext.SaveChangesAsync();
+        }
     }
 }

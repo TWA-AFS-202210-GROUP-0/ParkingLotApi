@@ -18,7 +18,7 @@ public class ParkingLotsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
+    public async Task<ActionResult<ParkingLotDto>> AddParkingLot([FromBody] ParkingLotDto parkingLotDto)
     {
         try
         {
@@ -36,5 +36,13 @@ public class ParkingLotsController : ControllerBase
             return BadRequest(e.Message);
         }
         
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete([FromRoute] int id)
+    {
+        await parkingLotService.DeleteParkingLot(id);
+
+        return this.NoContent();
     }
 }
