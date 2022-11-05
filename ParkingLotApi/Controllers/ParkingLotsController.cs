@@ -2,6 +2,7 @@ namespace ParkingLotApi.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dtos;
+using ParkingLotApi.Exceptions;
 using ParkingLotApi.Services;
 using System.Threading.Tasks;
 
@@ -19,9 +20,21 @@ public class ParkingLotsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
     {
-        var id = await this.parkingLotService.AddParkingLot(parkingLotDto);
+        try
+        {
+            var id = await this.parkingLotService.AddParkingLot(parkingLotDto);
 
-        //return CreatedAtAction(nameof(AddParkingLot), new { id = id }, parkingLotDto);
-        return Created($"/ParkingLots/{id}", parkingLotDto);
+            //return CreatedAtAction(nameof(AddParkingLot), new { id = id }, parkingLotDto);
+            return Created($"/ParkingLots/{id}", parkingLotDto);
+        }
+        catch (WrongNameException e)
+        {
+            return Conflict(e.Message);
+        }
+        catch (WrongCapacityException e)
+        {
+            return BadRequest(e.Message);
+        }
+        
     }
 }
