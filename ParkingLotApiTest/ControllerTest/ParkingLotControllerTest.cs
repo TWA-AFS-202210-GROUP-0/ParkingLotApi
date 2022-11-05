@@ -1,15 +1,16 @@
-using System.Threading.Tasks;
-using ParkingLotApi;
-using Xunit;
-
 namespace ParkingLotApiTest.ControllerTest
 {
-    using Microsoft.AspNetCore.Mvc.Testing;
-    using Newtonsoft.Json;
-    using ParkingLotApi.Dtos;
     using System.Net;
     using System.Net.Http;
     using System.Text;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc.Testing;
+    using Newtonsoft.Json;
+    using ParkingLotApi;
+    using ParkingLotApi.Dtos;
+    using Xunit;
+
+    [Collection("Sequential")]
 
     public class ParkingLotControllerTest:TestBase
     {
@@ -39,47 +40,6 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             var createdParkingLot = await DeserializeResponse<ParkingLotDto>(response);
             Assert.Equal("ParkingLotA", createdParkingLot.Name);
-        }
-
-        [Fact]
-        public async void Should_return_conflict_when_add_a_parking_lot_again()
-        {
-            // given
-            var client = GetClient();
-            var parkingLot = new ParkingLotDto
-            {
-                Name = "ParkingLotA",
-                Capacity = 50,
-                Location = "Street A",
-            };
-            var parkingLotContent = BuildRequestBody(parkingLot);
-            await client.PostAsync("/parkingLots", parkingLotContent);
-
-            //when
-            var response = await client.PostAsync("/parkingLots", parkingLotContent);
-
-            //then
-            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
-        }
-
-        [Fact]
-        public async void Should_return_bad_request_when_add_minus_capacity_again()
-        {
-            // given
-            var client = GetClient();
-            var parkingLot = new ParkingLotDto
-            {
-                Name = "ParkingLotA",
-                Capacity = -10,
-                Location = "Street A",
-            };
-            var parkingLotContent = BuildRequestBody(parkingLot);
-
-            //when
-            var response = await client.PostAsync("/parkingLots", parkingLotContent);
-
-            //then
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         private static StringContent BuildRequestBody<T>(T requestObject)
