@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Exceptions;
 using ParkingLotApi.Services;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 [ApiController]
@@ -18,7 +19,7 @@ public class ParkingLotsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ParkingLotDto>> AddParkingLot([FromBody] ParkingLotDto parkingLotDto)
+    public async Task<ActionResult<ParkingLotDto>> Add([FromBody] ParkingLotDto parkingLotDto)
     {
         try
         {
@@ -42,7 +43,14 @@ public class ParkingLotsController : ControllerBase
     public async Task<ActionResult> Delete([FromRoute] int id)
     {
         await parkingLotService.DeleteParkingLot(id);
-
         return this.NoContent();
+    }
+
+    [HttpGet("page/{pageIndex}")]
+    public async Task<ActionResult<IEnumerable<ParkingLotNoLocationDto>>> GetByPage([FromRoute] int pageIndex)
+    {
+        var parkingLotNoLocationDtos = await parkingLotService.GetParkingLotByPage(pageIndex);
+        return Ok(parkingLotNoLocationDtos);
+        
     }
 }

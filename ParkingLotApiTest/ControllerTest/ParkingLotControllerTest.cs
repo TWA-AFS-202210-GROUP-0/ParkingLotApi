@@ -1,5 +1,7 @@
 namespace ParkingLotApiTest.ControllerTest
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Text;
@@ -62,8 +64,38 @@ namespace ParkingLotApiTest.ControllerTest
             //then
             var response2 = await client.PostAsync("/parkingLots", parkingLotContent);
             Assert.Equal(HttpStatusCode.Created, response2.StatusCode);
-
         }
+
+        [Fact]
+        public async Task Should_get_parking_lot_by_specific_page_success()
+        {
+            var client = GetClient();
+            int parkingLotsCount = 20;
+            for (var parkingLotsIndex = 0; parkingLotsIndex < parkingLotsCount; parkingLotsIndex++)
+            {
+                var parkingLot = new ParkingLotDto
+                {
+                    Name = "Parking Lot " + (parkingLotsIndex + 1).ToString(),
+                    Capacity = parkingLotsIndex,
+                    Location = "Street " + (parkingLotsIndex + 1).ToString(),
+                };
+                var parkingLotContent = BuildRequestBody(parkingLot);
+                await client.PostAsync("/parkingLots", parkingLotContent);
+            }
+
+            //when
+            int pageIndex = 2;
+            var response = await client.GetAsync($"/ParkingLots/page/{pageIndex}");
+
+            //then
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var parkingLotsList = await DeserializeResponse<List<ParkingLotNoLocationDto>>(response);
+            Assert.Equal(5,parkingLotsList.Count);
+            var parkingLotsName = parkingLotsList.Select(_ => _.Name);
+            Assert.Contains("Parking Lot 16", parkingLotsName);
+            Assert.Contains("Parking Lot 20", parkingLotsName);
+        }
+
         private static StringContent BuildRequestBody<T>(T requestObject)
         {
             var requestJson = JsonConvert.SerializeObject(requestObject);

@@ -3,6 +3,7 @@ using ParkingLotApi.Exceptions;
 using ParkingLotApi.Models;
 using ParkingLotApi.Repository;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,6 +42,16 @@ namespace ParkingLotApi.Services
                 .FirstOrDefault(_ => _.Id == id);
             parkingLotContext.ParkingLots.Remove(foundParkingLot);
             await parkingLotContext.SaveChangesAsync();
+        }
+
+        public async Task<List<ParkingLotNoLocationDto>> GetParkingLotByPage(int pageIndex)
+        {
+            int pageSize = 15;
+            int parkingLotCount = parkingLotContext.ParkingLots.Count();
+            int beginIndex = (pageIndex - 1) * pageSize;
+            int pageIndexCount = Math.Min(pageSize, parkingLotCount - (pageIndex - 1) * pageSize);
+            var parkingLots = parkingLotContext.ParkingLots.OrderBy(_ => _.Id).ToList().GetRange(beginIndex, pageIndexCount);
+            return parkingLots.Select(parkingLot => new ParkingLotNoLocationDto(parkingLot)).ToList();
         }
     }
 }
