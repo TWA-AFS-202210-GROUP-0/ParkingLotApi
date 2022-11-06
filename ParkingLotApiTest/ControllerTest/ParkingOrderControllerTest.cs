@@ -44,14 +44,14 @@ namespace ParkingLotApiTest.ControllerTest
             //given
             var parkingOrderService = new Mock<IParkingOrderService>();
             parkingOrderService.Setup(x => x.CreateOrder(It.IsAny<int>(), It.IsAny<ParkingOrderDto>()))
-                .Throws<NullReferenceException>();
+                .Throws(new NullReferenceException("The parking lot is full."));
                 var parkingOrderController = new ParkingOrderController(parkingOrderService.Object);
             //When
             var actionResult = await parkingOrderController.PostOrder(1, new ParkingOrderDto());
             //then
             var postResult = Assert.IsType<NotFoundObjectResult>(actionResult.Result);
             var result = Assert.IsType<string>(postResult.Value);
-            Assert.Equal("The parking lot is full", result);
+            Assert.Equal("The parking lot is full.", result);
         }
 
         [Fact]

@@ -29,7 +29,7 @@ namespace ParkingLotApi.Controllers
             }
             catch (NullReferenceException e)
             {
-                return NotFound("The parking lot is full");
+                return NotFound(e.Message);
             }
         }
 

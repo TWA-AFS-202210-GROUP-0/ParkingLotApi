@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace ParkingLotApi.Dto
 {
@@ -10,5 +11,7 @@ namespace ParkingLotApi.Dto
         public int Capacity { get; set; }
         [Required]
         public string Location { get; set; }
+
+        public List<ParkingOrderDto>? ParkingOrderDtos { get; set; }
     }
 }

@@ -16,5 +16,7 @@ namespace ParkingLotApi.Models
         public int Capacity { get; set; }
 
         public string Location { get; set; }
+
+        public List<ParkingOrderEntity> ParkingOrderEntities { get; set; }
     }
 }

@@ -7,8 +7,9 @@ namespace ParkingLotApiTest.ServiceTest
 {
     public class ServiceTestBase : IDisposable
     {
-        protected readonly ParkingDbContext ParkingDbContext;
-        protected readonly ParkingLotService ParkingLotService;
+        protected readonly ParkingDbContext parkingDbContext;
+        protected readonly ParkingLotService parkingLotService;
+        protected readonly ParkingOrderService parkingOrderService;
 
         public ServiceTestBase()
         {
@@ -16,15 +17,17 @@ namespace ParkingLotApiTest.ServiceTest
                 .UseInMemoryDatabase(databaseName: $"{GetType()}")
                 .Options;
 
-            ParkingDbContext = new ParkingDbContext(options);
-            ParkingLotService = new ParkingLotService(ParkingDbContext);
+            parkingDbContext = new ParkingDbContext(options);
+            parkingLotService = new ParkingLotService(parkingDbContext);
+            parkingOrderService = new ParkingOrderService(parkingDbContext);
 
         }
 
         public async void Dispose()
         {
-            ParkingDbContext.ParkingLots.RemoveRange(ParkingDbContext.ParkingLots);
-            await ParkingDbContext.SaveChangesAsync();
+            parkingDbContext.ParkingLots.RemoveRange(parkingDbContext.ParkingLots);
+            parkingDbContext.ParkingOrders.RemoveRange(parkingDbContext.ParkingOrders);
+            await parkingDbContext.SaveChangesAsync();
         }
     }
 }

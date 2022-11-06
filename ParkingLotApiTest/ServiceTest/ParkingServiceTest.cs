@@ -23,12 +23,12 @@ namespace ParkingLotApiTest.ServiceTest
             };
 
             // when
-            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            var newParkingLotId = await parkingLotService.AddParkingLot(parkingLotDto);
 
             // then
-            Assert.Equal(1, ParkingDbContext.ParkingLots.ToList().Count);
-            Assert.Equal(parkingLotDto.Name, ParkingDbContext.ParkingLots.ToList()[0].Name);
-            Assert.Equal(newParkingLotDto, ParkingDbContext.ParkingLots.ToList()[0].Id);
+            Assert.Equal(1, parkingDbContext.ParkingLots.ToList().Count);
+            Assert.Equal(parkingLotDto.Name, parkingDbContext.ParkingLots.ToList()[0].Name);
+            Assert.Equal(newParkingLotId, parkingDbContext.ParkingLots.ToList()[0].Id);
         }
 
         [Fact]
@@ -43,10 +43,10 @@ namespace ParkingLotApiTest.ServiceTest
             };
 
             // when
-            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            var newParkingLotId = await parkingLotService.AddParkingLot(parkingLotDto);
             // Then
-            Assert.ThrowsAsync<DuplicateNameException>(async () => await ParkingLotService.AddParkingLot(parkingLotDto));
-            Assert.Equal(1, ParkingDbContext.ParkingLots.Count());
+            Assert.ThrowsAsync<DuplicateNameException>(async () => await parkingLotService.AddParkingLot(parkingLotDto));
+            Assert.Equal(1, parkingDbContext.ParkingLots.Count());
         }
 
         [Fact]
@@ -59,9 +59,9 @@ namespace ParkingLotApiTest.ServiceTest
                 Capacity = 10,
                 Location = "TUSPark",
             };
-            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            var newParkingLotId = await parkingLotService.AddParkingLot(parkingLotDto);
             // when
-            var getParkingLotDto = await ParkingLotService.GetParkingLotById(newParkingLotDto);
+            var getParkingLotDto = await parkingLotService.GetParkingLotById(newParkingLotId);
             // Then
             Assert.Equal(parkingLotDto.Name, getParkingLotDto.Name);
         }
@@ -77,10 +77,10 @@ namespace ParkingLotApiTest.ServiceTest
                 Capacity = 10,
                 Location = "TUSPark",
             };
-            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            var newParkingLotId = await parkingLotService.AddParkingLot(parkingLotDto);
             // Then
             Assert.ThrowsAsync<NullReferenceException>(async () =>
-                await ParkingLotService.GetParkingLotById(newParkingLotDto - 1));
+                await parkingLotService.GetParkingLotById(newParkingLotId - 1));
         }
 
         [Fact]
@@ -93,9 +93,9 @@ namespace ParkingLotApiTest.ServiceTest
                 Capacity = 10,
                 Location = "TUSPark",
             };
-            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            var newParkingLotId = await parkingLotService.AddParkingLot(parkingLotDto);
             // Then
-            var updatedParkingLotDto = await ParkingLotService.UpdateParkingLot(newParkingLotDto, new ParkingLotDto()
+            var updatedParkingLotDto = await parkingLotService.UpdateParkingLot(newParkingLotId, new ParkingLotDto()
             {
                 Name = "SLB",
                 Capacity = 20,
@@ -117,10 +117,10 @@ namespace ParkingLotApiTest.ServiceTest
                     Capacity = i,
                     Location = "dummy"
                 };
-                await ParkingLotService.AddParkingLot(parkingLot);
+                await parkingLotService.AddParkingLot(parkingLot);
             }
             //when
-            var parkingLotsInPage = await ParkingLotService.GetMultiParkingLots(15, 15);
+            var parkingLotsInPage = await parkingLotService.GetMultiParkingLots(15, 15);
             //Then
             Assert.Equal(5, parkingLotsInPage.Count);
         }

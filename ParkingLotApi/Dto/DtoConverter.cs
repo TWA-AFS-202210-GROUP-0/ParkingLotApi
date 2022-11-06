@@ -25,6 +25,25 @@ namespace ParkingLotApi.Dto
             };
         }
 
+        public static ParkingOrderEntity ToEntity(ParkingOrderDto parkingOrderDto)
+        {
+            return new ParkingOrderEntity()
+            {
+                PlateNumber = parkingOrderDto.PlateNumber,
+            };
+        }
 
+        public static ParkingOrderDto ToDto(ParkingOrderEntity parkingOrderEntity)
+        {
+            return new ParkingOrderDto()
+            {
+                Id = parkingOrderEntity.Id,
+                PlateNumber = parkingOrderEntity.PlateNumber,
+                NameOfParkingLot = parkingOrderEntity.NameOfParkingLot,
+                CreateTime = parkingOrderEntity.CreateTime,
+                CloseTime = parkingOrderEntity.CloseTime,
+                IsOpen = parkingOrderEntity.IsOpen,
+            };
+        }
     }
 }
