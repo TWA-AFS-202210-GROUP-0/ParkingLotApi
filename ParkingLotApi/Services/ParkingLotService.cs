@@ -75,7 +75,7 @@ namespace ParkingLotApi.Services
             return parkingLotEntities.Select(_ => new ParkingLotDto(_)).ToList();
         }
 
-        public async Task<ParkingLotDto> UpdateParkingLotCapacity(int id, int newCapacity)
+        public async Task<ParkingLotDto> UpdateParkingLot(int id, ParkingLotDto parkingLotDto)
         {
             var parkingLotEntityFound = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Id == id);
             if (parkingLotEntityFound == null)
@@ -83,7 +83,9 @@ namespace ParkingLotApi.Services
                 return null;
             }
 
-            parkingLotEntityFound.Capacity = newCapacity;
+            parkingLotEntityFound.Capacity = parkingLotDto.Capacity;
+            parkingLotEntityFound.Location = parkingLotDto.Location;
+            parkingLotEntityFound.Orders = parkingLotDto.OrderDtos?.Select(_ => _.ToEntity()).ToList();
             var parkingLotEntity = _parkingLotDbContext.ParkingLots.Update(parkingLotEntityFound);
             _parkingLotDbContext.SaveChangesAsync();
             return new ParkingLotDto(parkingLotEntityFound);

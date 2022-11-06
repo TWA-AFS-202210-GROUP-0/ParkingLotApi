@@ -82,7 +82,7 @@ namespace ParkingLotApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotsCapacityById([FromRoute] int id, [FromBody] ParkingLotDto parkingLotDto)
         {
-            var parkingLotDtoReturn = await _parkingLotService.UpdateParkingLotCapacity(id, parkingLotDto.Capacity);
+            var parkingLotDtoReturn = await _parkingLotService.UpdateParkingLot(id, parkingLotDto);
             if (parkingLotDtoReturn == null)
             {
                 return NotFound();

@@ -189,6 +189,38 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(newCapacity, parkingLotDtoUpdated.Capacity);
         }
 
+        [Fact(Skip = "to do")]
+        public async Task Should_update_parkingLot_orders_by_id_success()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            var content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync("/parkingLots", content);
+            var body = await response.Content.ReadAsStringAsync();
+            var id = JsonConvert.DeserializeObject<int>(body);
+            var newCapacity = 11;
+            parkingLotDto.Capacity = newCapacity;
+            var newHttpContent = JsonConvert.SerializeObject(parkingLotDto);
+            var newContent = new StringContent(newHttpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            var responsePutReturn = await client.PutAsync($"/parkingLots/{id}", newContent);
+            var bodyPutReturn = await responsePutReturn.Content.ReadAsStringAsync();
+            var parkingLotDtoReturn = JsonConvert.DeserializeObject<ParkingLotDto>(bodyPutReturn);
+            // then
+            Assert.Equal(newCapacity, parkingLotDtoReturn.Capacity);
+            var responseUpdated = await client.GetAsync($"/parkingLots/{id}");
+            var bodyUpdated = await responseUpdated.Content.ReadAsStringAsync();
+            var parkingLotDtoUpdated = JsonConvert.DeserializeObject<ParkingLotDto>(bodyUpdated);
+            Assert.Equal(newCapacity, parkingLotDtoUpdated.Capacity);
+        }
+
         private async Task<List<ParkingLotDto>> AddTestParkingLots(HttpClient client)
         {
             var parkingLotDtos = new List<ParkingLotDto>();

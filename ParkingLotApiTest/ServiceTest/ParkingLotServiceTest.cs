@@ -129,12 +129,43 @@ namespace ParkingLotApiTest.ServiceTest
             ParkingLotService parkingLotService = new ParkingLotService(context);
             var id = await parkingLotService.AddParkingLot(parkingLotDto);
             var newCapacity = 11;
+            parkingLotDto.Capacity = newCapacity;
             // when
-            var updateParkingLotCapacityReturn = await parkingLotService.UpdateParkingLotCapacity(id, newCapacity);
+            var updateParkingLotCapacityReturn = await parkingLotService.UpdateParkingLot(id, parkingLotDto);
             // then
             Assert.Equal(newCapacity, updateParkingLotCapacityReturn.Capacity);
             var parkingLotDtoUpdated = await parkingLotService.GetParkingLotById(id);
             Assert.Equal(newCapacity, parkingLotDtoUpdated.Capacity);
+        }
+
+        [Fact]
+        public async Task Should_add_a_order_for_parkingLot_by_id_seccessfully_via_parkingLot_service()
+        {
+            // given
+            var context = GetParkingLotDbContext();
+            var parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            ParkingLotService parkingLotService = new ParkingLotService(context);
+            var id = await parkingLotService.AddParkingLot(parkingLotDto);
+            var parkingLotDtoAddNewOrder = await parkingLotService.GetParkingLotById(id);
+            var newOrder = new OrderDto()
+            {
+                Name = "SLB",
+                PlateNumber = "ABC111",
+                CreationTime = DateTime.Now,
+                OrderStatus = true
+            };
+            parkingLotDtoAddNewOrder.OrderDtos.Add(newOrder);
+            // when
+            var updateParkingLotCapacityReturn = await parkingLotService.UpdateParkingLot(id, parkingLotDtoAddNewOrder);
+            // then
+            Assert.Equal(1, updateParkingLotCapacityReturn.OrderDtos.Count());
+            var parkingLotDtoUpdated = await parkingLotService.GetParkingLotById(id);
+            Assert.Equal("ABC111", parkingLotDtoUpdated.OrderDtos[0].PlateNumber);
         }
 
         private List<ParkingLotDto> AddTestParkingLots(ParkingLotService parkingLotService)
