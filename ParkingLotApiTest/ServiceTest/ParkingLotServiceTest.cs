@@ -115,6 +115,28 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(1, response.Count());
         }
 
+        [Fact]
+        public async Task Should_update_parkingLot_capacity_by_id_seccessfully_via_parkingLot_service()
+        {
+            // given
+            var context = GetParkingLotDbContext();
+            var parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            ParkingLotService parkingLotService = new ParkingLotService(context);
+            var id = await parkingLotService.AddParkingLot(parkingLotDto);
+            var newCapacity = 11;
+            // when
+            var updateParkingLotCapacityReturn = await parkingLotService.UpdateParkingLotCapacity(id, newCapacity);
+            // then
+            Assert.Equal(11, updateParkingLotCapacityReturn.Capacity);
+            var parkingLotDtoUpdated = await parkingLotService.GetParkingLotById(id);
+            Assert.Equal(11, parkingLotDtoUpdated.Capacity);
+        }
+
         private List<ParkingLotDto> AddTestParkingLots(ParkingLotService parkingLotService)
         {
             List<ParkingLotDto> parkingLotDtos = new List<ParkingLotDto>();
