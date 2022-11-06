@@ -64,5 +64,12 @@ namespace ParkingLotApi.Controllers
             var parkingLotDto = await _parkingLotService.DeleteParkingLotById(id);
             return Ok(parkingLotDto);
         }
+
+        [HttpGet]
+        [Route("byPage")]
+        public async Task<List<ParkingLotDto>> GetParkingLotsByPage([FromQuery] int page)
+        {
+            return await _parkingLotService.GetAll();
+        }
     }
 }

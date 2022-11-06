@@ -100,6 +100,50 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Null(foundResult);
         }
 
+        [Fact]
+        public async Task Should_get_parkingLot_of_one_page_success()
+        {
+            // given
+            var context = GetParkingLotDbContext();
+            ParkingLotService parkingLotService = new ParkingLotService(context);
+            var parkingLotDtos = AddTestParkingLots(parkingLotService);
+            // when
+            int page = 2;
+            var response = await parkingLotService.GetParkingLotByPage(page);
+            // then
+            Assert.Equal(parkingLotDtos[15].Name, response[0].Name);
+            Assert.Equal(1, response.Count());
+        }
+
+        private List<ParkingLotDto> AddTestParkingLots(ParkingLotService parkingLotService)
+        {
+            List<ParkingLotDto> parkingLotDtos = new List<ParkingLotDto>();
+            parkingLotDtos.Add(generateParkingLotDto("SLB", 10, "TUS"));
+            for (int i = 0; i < 14; i++)
+            {
+                parkingLotDtos.Add(generateParkingLotDto($"TW{i}", 10, $"TUS{i}"));
+            }
+            parkingLotDtos.Add(generateParkingLotDto("Intel", 30, "PKU"));
+
+            var parkingLotEntities = parkingLotDtos.Select(_ => _.ToEntity()).ToList();
+            foreach (var parkingLotDto in parkingLotDtos)
+            {
+                parkingLotService.AddParkingLot(parkingLotDto);
+            }
+
+            return parkingLotDtos;
+        }
+
+        private ParkingLotDto generateParkingLotDto(string name, int capacity, string location)
+        {
+            return new ParkingLotDto
+            {
+                Name = name,
+                Capacity = capacity,
+                Location = location
+            };
+        }
+
         private ParkingLotDbContext GetParkingLotDbContext()
         {
             var scope = Factory.Services.CreateScope();
