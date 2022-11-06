@@ -163,5 +163,35 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.NotNull(order.CreationTime);
         }
 
+        [Fact]
+        public async Task Should_leave_one_car_in_parking_lot_successfully()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDTO parkingLotDTO = new ParkingLotDTO
+            {
+                Name = "hi",
+                Capacity = 1,
+                Location = "hihi",
+            };
+            var requestBody = CreateRequestBody(parkingLotDTO);
+            var response = await client.PostAsync("/parkinglots", requestBody);
+            var id = await DeserializeResponse<int>(response);
+            requestBody = CreateRequestBody("XXX111");
+            var getResponse = await client.PostAsync($"/parkinglots/{id}/orders", requestBody);
+            var order = await DeserializeResponse<OrderDTO>(getResponse);
+            requestBody = CreateRequestBody(order);
+
+            // when
+            response = await client.PutAsync($"/parkinglots/{id}/orders", requestBody);
+            var leftOrder = await DeserializeResponse<OrderDTO>(response);
+
+            // then
+            Assert.Equal("XXX111", order.PlateNumber);
+            Assert.Equal(parkingLotDTO.Name, leftOrder.ParkingLotName);
+            Assert.NotNull(leftOrder.CreationTime);
+            Assert.NotNull(leftOrder.ClosedTime);
+            Assert.Equal("closed", leftOrder.Status);
+        }
     }
 }
