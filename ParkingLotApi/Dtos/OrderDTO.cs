@@ -33,5 +33,18 @@ namespace ParkingLotApi
 
         public string Status { get; set; }
 
+        public OrderEntity ToEntity()
+        {
+            return new OrderEntity
+            {
+                OrderNumber = OrderNumber,
+                ParkingLotName = ParkingLotName,
+                PlateNumber = PlateNumber,
+                CreationTime = CreationTime,
+                ClosedTime = ClosedTime,
+                Status = Status == "open" ? true : false,
+            };
+        }
+
     }
 }

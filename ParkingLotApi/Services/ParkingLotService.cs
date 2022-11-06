@@ -108,5 +108,15 @@ namespace ParkingLotApi.Services
                 .Where(o => o.Id == id)
                 .Where(o => o.Status).Count() > parkingLot.Capacity;
         }
+
+        public async Task<OrderDTO> CLoseParkingCarOrder(OrderDTO order)
+        {
+            var orderEntity = order.ToEntity();
+            orderEntity.ClosedTime = DateTime.Now;
+            orderEntity.Status = false;
+            parkingLotContext.Orders.Update(orderEntity);
+            await parkingLotContext.SaveChangesAsync();
+            return new OrderDTO(orderEntity);
+        }
     }
 }

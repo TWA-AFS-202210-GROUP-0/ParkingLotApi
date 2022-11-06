@@ -155,6 +155,35 @@ public class ParkingLotServiceTest: TestBase
         Assert.NotNull(order.CreationTime);
     }
 
+    [Fact]
+    public async Task Should_close_order_when_park_a_car_sucessfully()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+        {
+            Name = "hi",
+            Capacity = 1,
+            Location = "hihi",
+        };
+
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
+        var carPlate = "XXX111";
+        OrderDTO order = await parkingLotService.AddCarInParkingLot(id, carPlate);
+
+        // when
+        var closedOrder = await parkingLotService.CLoseParkingCarOrder(order);
+
+        // then
+        Assert.Equal(carPlate, closedOrder.PlateNumber);
+        Assert.Equal(parkingLotDTO.Name, closedOrder.ParkingLotName);
+        Assert.Equal("closed", closedOrder.Status);
+        Assert.NotNull(closedOrder.OrderNumber);
+        Assert.NotNull(closedOrder.CreationTime);
+        Assert.NotNull(closedOrder.ClosedTime);
+    }
+
     private ParkingLotContext GetParkingLotContext()
     {
         var scope = Factory.Services.CreateScope();
