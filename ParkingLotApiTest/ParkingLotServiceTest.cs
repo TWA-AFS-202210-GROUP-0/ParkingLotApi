@@ -35,6 +35,28 @@ public class ParkingLotServiceTest: TestBase
         Assert.Equal(1, context.ParkingLots.Count());
     }
 
+    [Fact]
+    public async Task Should_delete_parkinglot_sucessfully()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+        {
+            Name = "hi",
+            Capacity = 1,
+            Location = "hihi",
+        };
+
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
+
+        // when
+        await parkingLotService.DeleteParkingLot(id);
+
+        // then
+        Assert.Equal(0, context.ParkingLots.Count());
+    }
+
     private ParkingLotContext GetParkingLotContext()
     {
         var scope = Factory.Services.CreateScope();

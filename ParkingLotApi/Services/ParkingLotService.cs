@@ -33,6 +33,14 @@ namespace ParkingLotApi.Services
             return parkingLotEntity.Id;
         }
 
+        public async Task DeleteParkingLot(int id)
+        {
+            var parkingLot = parkingLotContext.ParkingLots
+                .FirstOrDefault(_ => _.Id == id);
+            parkingLotContext.ParkingLots.Remove(parkingLot);
+            await parkingLotContext.SaveChangesAsync();
+        }
+
         private bool IsParkingLotNameExisted(ParkingLotEntity parkingLot)
         {
             var parkingLotInSystem = this.parkingLotContext.ParkingLots.FirstOrDefault(p => p.Name.Equals(parkingLot.Name));
@@ -43,5 +51,7 @@ namespace ParkingLotApi.Services
         {
             return parkingLot.Capacity >= 0;
         }
+
+        
     }
 }
