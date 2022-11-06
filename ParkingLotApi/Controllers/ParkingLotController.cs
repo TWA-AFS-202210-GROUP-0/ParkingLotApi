@@ -1,4 +1,8 @@
+using System;
+using System.Data;
+using System.Threading.Tasks;
 using ParkingLotApi.Dto;
+using ParkingLotApi.Services;
 
 namespace ParkingLotApi.Controllers;
 
@@ -8,10 +12,24 @@ using Microsoft.AspNetCore.Mvc;
 [Route("parkinglots")]
 public class ParkingLotController : ControllerBase
 {
+    private readonly IParkingLotService parkingLotService;
+
+    public ParkingLotController(IParkingLotService parkingLotService)
+    {
+        this.parkingLotService = parkingLotService;
+    }
 
     [HttpPost]
-    public ActionResult<ParkingLotDto> ParkingLot([FromBody] ParkingLotDto parkingLotDto)
+    public async Task<ActionResult<ParkingLotDto>> CreateParkingLot([FromBody] ParkingLotDto parkingLotDto)
     {
-        return new CreatedResult("/parkinglots/1", new ParkingLotDto() { });
+        try
+        {
+            var id = parkingLotService.AddParkingLot(parkingLotDto);
+            return new CreatedResult($"parkinglots/{id}", parkingLotDto);
+        }
+        catch (DuplicateNameException e)
+        {
+            return Conflict(e.Message);
+        }
     }
 }

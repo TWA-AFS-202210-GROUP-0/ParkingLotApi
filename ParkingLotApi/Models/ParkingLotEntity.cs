@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace ParkingLotApi.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class ParkingLotEntity
     {
         public int Id { get; set; }

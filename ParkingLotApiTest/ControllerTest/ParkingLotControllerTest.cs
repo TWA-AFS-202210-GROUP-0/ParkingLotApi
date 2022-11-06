@@ -1,41 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Json;
+using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using System.Threading.Tasks;
-using ParkingLotApi;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Moq;
+using ParkingLotApi.Controllers;
 using ParkingLotApi.Dto;
-using Xunit;
+using ParkingLotApi.Services;
+using Xunit.Abstractions;
 
 namespace ParkingLotApiTest.ControllerTest
 {
-    using Microsoft.AspNetCore.Mvc.Testing;
-
     public class ParkingLotControllerTest
     {
-        public ParkingLotControllerTest()
-        {
-        }
-
-        public HttpClient GetClient()
-        {
-            var factory = new WebApplicationFactory<Program>();
-            return factory.CreateClient();
-        }
-
-        public async Task Should_create_new_parking_lot()
+        [Fact]
+        public async Task Should_create_parking_lot_whith_mock_service()
         {
             //Given
-            var client = GetClient();
-            var newCompany = new ParkingLotDto()
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.AddParkingLot(It.IsAny<ParkingLotDto>())).ReturnsAsync(1);
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //When
+            var actionResult = await parkingLotController.CreateParkingLot(new ParkingLotDto()
             {
                 Name = "SLB",
                 Capacity = 10,
-                Location = "TUSPark"
-            };
-            //When
-            var response = await client.PostAsJsonAsync("/parkinglots", newCompany);
+                Location = "TUSPark",
+            });
             //Then
-            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            var createdResult = Assert.IsType<CreatedResult>(actionResult.Result);
+            var dtoResult = Assert.IsType<ParkingLotDto>(createdResult.Value);
+            Assert.Equal("SLB",dtoResult.Name);
+            Assert.Equal(201,createdResult.StatusCode);
         }
     }
 }
