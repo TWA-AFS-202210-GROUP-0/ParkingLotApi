@@ -37,10 +37,10 @@ namespace ParkingLotApiTest.ControllerTest
 
         ParkingLotDto parkingLotwithOrder = new ParkingLotDto
         {
-            Capacity = 20,
+            Capacity = 10,
             Location = "536 South Forest Avenue",
             Name = "South Forest",
-            Availibility = 20,
+            Availibility = 9,
             ParkingOrderDto = new List<ParkingOrderDto>()
             {
                 new ParkingOrderDto()
@@ -54,6 +54,114 @@ namespace ParkingLotApiTest.ControllerTest
             },
         };
 
+        ParkingLotDto parkingLotwithClosedOrderBefore = new ParkingLotDto
+        {
+            Capacity = 10,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest",
+            Availibility = 8,
+            ParkingOrderDto = new List<ParkingOrderDto>()
+            {
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "AUCCD",
+                    CreateTime = DateTime.Now,
+                    NameOfParkingLot = "South Forest",
+                    Number = 1,
+                    OrderStatus = OrderStatus.OPEN
+                },
+
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "WPLKS",
+                    CreateTime = new DateTime(2022, 11, 1, 7, 0, 0),
+                    NameOfParkingLot = "South Forest",
+                    Number = 2,
+                    OrderStatus = OrderStatus.OPEN,
+                },
+            },
+        };
+
+        ParkingLotDto parkingLotwithClosedOrderAfter = new ParkingLotDto
+        {
+            Capacity = 10,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest",
+            Availibility = 9,
+            ParkingOrderDto = new List<ParkingOrderDto>()
+            {
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "AUCCD",
+                    CreateTime = DateTime.Now,
+                    NameOfParkingLot = "South Forest",
+                    Number = 1,
+                    OrderStatus = OrderStatus.OPEN
+                },
+
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "WPLKS",
+                    CreateTime = new DateTime(2022, 11, 1, 7, 0, 0),
+                    NameOfParkingLot = "South Forest",
+                    Number = 2,
+                    OrderStatus = OrderStatus.CLOSE,
+                    CloseTime = DateTime.Now
+                },
+            },
+        };
+
+        ParkingLotDto parkingLotwithFull = new ParkingLotDto
+        {
+            Capacity = 1,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest",
+        };
+        ParkingLotDto parkingLotwithFullBefore = new ParkingLotDto
+        {
+            Capacity = 1,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest",
+            Availibility = 0,
+            ParkingOrderDto = new List<ParkingOrderDto>()
+            {
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "WPLKS",
+                    CreateTime = new DateTime(2022, 11, 1, 7, 0, 0),
+                    NameOfParkingLot = "South Forest",
+                    Number = 1,
+                    OrderStatus = OrderStatus.OPEN,
+                },
+            },
+        };
+        ParkingLotDto parkingLotwithFullAfter = new ParkingLotDto
+        {
+            Capacity = 1,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest",
+            Availibility = 0,
+            ParkingOrderDto = new List<ParkingOrderDto>()
+            {
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "AUCCD",
+                    CreateTime = DateTime.Now,
+                    NameOfParkingLot = "South Forest",
+                    Number = 2,
+                    OrderStatus = OrderStatus.OPEN
+                },
+
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "WPLKS",
+                    CreateTime = new DateTime(2022, 11, 1, 7, 0, 0),
+                    NameOfParkingLot = "South Forest",
+                    Number = 1,
+                    OrderStatus = OrderStatus.OPEN,
+                },
+            },
+        };
 
         ParkingLotDto parkingLot2 = new ParkingLotDto
         {
@@ -87,10 +195,43 @@ namespace ParkingLotApiTest.ControllerTest
             // given
             var client = GetClient();
             // when
-            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLotwithOrder));
+            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            var url = responsePost.Headers.Location + "/orders";
+            var response = await client.PutAsync(url, SerializedObject(parkingLotwithOrder));
             var createdParkingLot = await ParseObject<ParkingLotDto>(response);
             // then
             Assert.Equivalent(parkingLotwithOrder, createdParkingLot);
+        }
+
+        [Fact]
+        public async Task Should_add_closed_Order_to_a_parking_lot_success()
+        {
+            // given
+            var client = GetClient();
+            // when
+            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            var url = responsePost.Headers.Location + "/orders";
+            var responsePut = await client.PutAsync(url, SerializedObject(parkingLotwithClosedOrderBefore));
+            var response = await client.PutAsync(url, SerializedObject(parkingLotwithClosedOrderAfter));
+            var createdParkingLot = await ParseObject<ParkingLotDto>(response);
+            // then
+            Assert.Equivalent(parkingLotwithClosedOrderAfter, createdParkingLot);
+        }
+
+        [Fact]
+        public async Task Should_not_add_Order_to_a_parking_lot_success()
+        {
+            // given
+            var client = GetClient();
+            // when
+            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLotwithFull));
+            var url = responsePost.Headers.Location + "/orders";
+            var responsePut = await client.PutAsync(url, SerializedObject(parkingLotwithFullBefore));
+            var response = await client.PutAsync(url, SerializedObject(parkingLotwithFullAfter));
+            var createdParkingLot = await ParseObject<ParkingLotDto>(response);
+            // then
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
         }
 
         [Fact]

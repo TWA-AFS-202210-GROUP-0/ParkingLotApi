@@ -14,7 +14,7 @@ namespace ParkingLotApi.Models
 
         public int Capacity { get; set; }
 
-        public int? Availibility { get; set; };
+        public int? Availibility { get; set; }
 
         public string Location { get; set; }
 

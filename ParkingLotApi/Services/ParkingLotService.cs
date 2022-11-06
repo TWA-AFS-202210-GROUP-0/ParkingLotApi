@@ -68,6 +68,23 @@ namespace ParkingLotApi.Services
             }
         }
 
+        public async Task<ParkingLotDto> UpdateOrderById(int id, ParkingLotDto parkingLotDto)
+        {
+            var parkingLot = await parkingLotDbcontext.ParkingLots.FirstOrDefaultAsync(
+                parkinglot => parkinglot.Id == id);
+            if (parkingLot != null)
+            {
+                var orderNumber = parkingLotDto.ParkingOrderDto.Where(_ => _.OrderStatus == OrderStatus.OPEN).ToList().Count;
+                parkingLot.Availibility = parkingLot.Capacity - orderNumber;
+                parkingLot.ParkingOrder = parkingLotDto.ParkingOrderDto.Select(_ => _.ToEntity()).ToList();
+                return new ParkingLotDto(parkingLot);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task DeleteParkingLot(int id)
         {
             var parkinglot = await parkingLotDbcontext.ParkingLots

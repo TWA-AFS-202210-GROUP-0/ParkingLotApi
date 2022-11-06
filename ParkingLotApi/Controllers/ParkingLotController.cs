@@ -37,6 +37,36 @@ namespace ParkingLotApi.Controllers
             return parkingLot != null ? parkingLot : NotFound();
         }
 
+        [HttpPut("{id}/orders")]
+        public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotOrderById(
+            [FromRoute] int id, [FromBody] ParkingLotDto parkingLotDto)
+        {
+            var parkingLot = await parkingLotService.UpdateOrderById(id, parkingLotDto);
+            if (parkingLot != null)
+            {
+                if (parkingLot.Availibility > 0)
+                {
+                    return parkingLot;
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+       // [HttpGet("{id}/orders")]
+       // public async Task<ActionResult<ParkingLotDto>> CreateParkingLotOrderById(
+       //     [FromRoute] int id, [FromBody] ParkingLotDto parkingLotDto)
+       // {
+       //     var parkingLot = await parkingLotService.UpdateOrderById(id, parkingLotDto);
+       //     return parkingLot != null ? parkingLot : NotFound();
+       // }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ParkingLotDto>> GetById(int id)
         {
