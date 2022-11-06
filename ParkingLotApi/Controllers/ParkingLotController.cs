@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using ParkingLotApi.Dto;
@@ -22,6 +23,10 @@ public class ParkingLotController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ParkingLotDto>> CreateParkingLot([FromBody] ParkingLotDto parkingLotDto)
     {
+        if (parkingLotDto.Capacity < 0)
+        {
+            return BadRequest();
+        }
         try
         {
             var id = parkingLotService.AddParkingLot(parkingLotDto);
@@ -46,4 +51,25 @@ public class ParkingLotController : ControllerBase
             return new NotFoundResult();
         }
     }
+
+    [HttpGet("{pageIndex}")]
+    public async Task<ActionResult<List<ParkingLotDto>>> Get15ParkingLotsOnePage([FromRoute] int pageIndex)
+    {
+        if (pageIndex < 1)
+        {
+            return BadRequest();
+        }
+        try
+        {
+            var parkingLots = await parkingLotService.GetMultiParkingLots(15 * (pageIndex - 1), 15);
+            return Ok(parkingLots);
+        }
+        catch (NullReferenceException e)
+        {
+            return new NotFoundResult();
+        }
+    }
+
+
+
 }
