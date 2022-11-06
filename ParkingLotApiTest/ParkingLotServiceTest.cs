@@ -98,7 +98,7 @@ public class ParkingLotServiceTest: TestBase
         var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
 
         // when
-        var parkingLot = await parkingLotService.GetParkingLot(id);
+        var parkingLot = parkingLotService.GetParkingLot(id);
 
         // then
         Assert.Equal(parkingLotDTO.Name, parkingLot.Name);
@@ -126,6 +126,33 @@ public class ParkingLotServiceTest: TestBase
 
         // then
         Assert.Equal(11, parkingLot.Capacity);
+    }
+
+    [Fact]
+    public async Task Should_create_order_when_park_a_car_sucessfully()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+        {
+            Name = "hi",
+            Capacity = 1,
+            Location = "hihi",
+        };
+
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
+        var carPlate = "XXX111";
+
+        // when
+        OrderDTO order = await parkingLotService.AddCarInParkingLot(id, carPlate);
+
+        // then
+        Assert.Equal(carPlate, order.PlateNumber);
+        Assert.Equal(parkingLotDTO.Name, order.ParkingLotName);
+        Assert.Equal("open", order.Status);
+        Assert.NotNull(order.OrderNumber);
+        Assert.NotNull(order.CreationTime);
     }
 
     private ParkingLotContext GetParkingLotContext()

@@ -59,7 +59,7 @@ public class ParkingLotsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ParkingLotDTO>> GetById([FromRoute] int id)
     {
-        var parkingLotDTO = await parkingLotService.GetParkingLot(id);
+        var parkingLotDTO = parkingLotService.GetParkingLot(id);
         return Ok(parkingLotDTO);
     }
 
@@ -69,5 +69,13 @@ public class ParkingLotsController : ControllerBase
         var parkingLotDTO = await parkingLotService.UpdateParkingLotCapacity(id, capacity);
         if (parkingLotDTO == null) { return NotFound(); }
         return Ok(parkingLotDTO);
+    }
+
+    [HttpPost("{id}/orders")]
+    public async Task<ActionResult<OrderDTO>> GetById([FromRoute] int id, [FromBody] string carPlate)
+    {
+        var orderDTO = await parkingLotService.AddCarInParkingLot(id, carPlate);
+        if (orderDTO == null) { return NotFound($"Not found parking lot with id {id}"); }
+        return Ok(orderDTO);
     }
 }

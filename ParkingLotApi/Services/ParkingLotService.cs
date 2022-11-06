@@ -33,7 +33,7 @@ namespace ParkingLotApi.Services
                 .GetRange(startIndex, endIndex - startIndex);
         }
 
-        public async Task<ParkingLotDTO> GetParkingLot(int id)
+        public ParkingLotDTO GetParkingLot(int id)
         {
             var parkingLot = parkingLotContext.ParkingLots.FirstOrDefault(p => p.Id == id);
             return parkingLot != null ? new ParkingLotDTO(parkingLot) : null;
@@ -82,6 +82,31 @@ namespace ParkingLotApi.Services
             return parkingLot.Capacity >= 0;
         }
 
-        
+        public async Task<OrderDTO> AddCarInParkingLot(int id, string car)
+        {
+            var parkingLot = GetParkingLot(id);
+
+            if(IsAtCapacity(id)) { return null; }
+
+            var orderEntity = new OrderEntity
+            {
+                OrderNumber = Guid.NewGuid().ToString(),
+                ParkingLotName = parkingLot.Name,
+                PlateNumber = car,
+                CreationTime = DateTime.Now,
+                Status = true,
+            };
+            parkingLotContext.Orders.Add(orderEntity);
+            await parkingLotContext.SaveChangesAsync();
+            return new OrderDTO(orderEntity);
+        }
+
+        private bool IsAtCapacity(int id)
+        {
+            var parkingLot = GetParkingLot(id);
+            return parkingLotContext.Orders
+                .Where(o => o.Id == id)
+                .Where(o => o.Status).Count() > parkingLot.Capacity;
+        }
     }
 }
