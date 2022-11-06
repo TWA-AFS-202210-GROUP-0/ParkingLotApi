@@ -107,9 +107,39 @@ namespace ParkingLotApiTest.ControllerTest
             var id = JsonConvert.DeserializeObject<int>(body);
             // when
             var responsePosted = await client.GetAsync($"parkingLots/{id}");
+            // then
             var bodyPosted = await responsePosted.Content.ReadAsStringAsync();
             var parkingLotDtoPosted = JsonConvert.DeserializeObject<ParkingLotDto>(bodyPosted);
             Assert.Equal(parkingLotDto.Name, parkingLotDtoPosted.Name);
+        }
+
+        [Fact]
+        public async Task Should_delete_parkingLot_by_id_success()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            var content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var response = await client.PostAsync("/parkingLots", content);
+            var body = await response.Content.ReadAsStringAsync();
+            var id = JsonConvert.DeserializeObject<int>(body);
+            // when
+            var responseDeleted = await client.DeleteAsync($"parkingLots/{id}");
+            // then
+            var bodyDeleted = await responseDeleted.Content.ReadAsStringAsync();
+            var parkingLotDtoDeleted = JsonConvert.DeserializeObject<ParkingLotDto>(bodyDeleted);
+            Assert.Equal(parkingLotDto.Name, parkingLotDtoDeleted.Name);
+
+            var responsePosted = await client.GetAsync($"parkingLots/{id}");
+            var bodyPosted = await responsePosted.Content.ReadAsStringAsync();
+            var parkingLotDtoPosted = JsonConvert.DeserializeObject<ParkingLotDto>(bodyPosted);
+            Assert.Equal(HttpStatusCode.NotFound, responsePosted.StatusCode);
         }
     }
 }

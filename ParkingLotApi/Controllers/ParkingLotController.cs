@@ -41,7 +41,6 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpGet("{id}")]
-
         public async Task<ActionResult<ParkingLotDto>> GetParkingLotById([FromRoute]int id)
         {
             var parkingLotDt = await _parkingLotService.GetParkingLotById(id);
@@ -51,6 +50,19 @@ namespace ParkingLotApi.Controllers
             }
 
             return Ok(parkingLotDt);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> DeleteParkingLotById([FromRoute] int id)
+        {
+            var parkingLotDtFound = await _parkingLotService.GetParkingLotById(id);
+            if (parkingLotDtFound == null)
+            {
+                return NotFound();
+            }
+
+            var parkingLotDto = await _parkingLotService.DeleteParkingLotById(id);
+            return Ok(parkingLotDto);
         }
     }
 }
