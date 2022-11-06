@@ -10,6 +10,7 @@ using ParkingLotApi.Services;
 
 namespace ParkingLotApiTest.ServiceTest
 {
+    [Collection("1")]
     public class ParkingLotServiceTest : TestBase
     {
         public ParkingLotServiceTest(CustomWebApplicationFactory<Program> factory)

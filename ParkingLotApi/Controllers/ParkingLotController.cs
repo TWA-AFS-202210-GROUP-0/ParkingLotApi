@@ -21,5 +21,12 @@ namespace ParkingLotApi.Controllers
         {
             return _parkingLotService.GetAll();
         }
+
+        [HttpPost]
+        public ParkingLotDto AddParkingLot(ParkingLotDto parkingLotDto)
+        {
+            _parkingLotService.AddParkingLot(parkingLotDto);
+            return parkingLotDto;
+        }
     }
 }

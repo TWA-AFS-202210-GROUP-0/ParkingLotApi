@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text;
@@ -10,6 +11,7 @@ using ParkingLotApi.Dtos;
 
 namespace ParkingLotApiTest.ControllerTest
 {
+    [Collection("1")]
     public class ParkingLotControllerTest : TestBase
     {
         public ParkingLotControllerTest(CustomWebApplicationFactory<Program> factory)
@@ -38,6 +40,34 @@ namespace ParkingLotApiTest.ControllerTest
             var returnParkingLots = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
 
             Assert.Single(returnParkingLots);
+        }
+
+        [Fact(Skip = "To do in fulture")]
+        public async Task Should_create_parkingLot_fail_when_name_is_repeat()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            var content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            await client.PostAsync("/parkingLots", content);
+            ParkingLotDto repeatParkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 11,
+                Location = "Tus"
+            };
+            var repeatHttpContent = JsonConvert.SerializeObject(repeatParkingLotDto);
+            var repeatContent = new StringContent(repeatHttpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            var response = await client.PostAsync("/parkingLots", repeatContent);
+            // then
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         }
     }
 }
