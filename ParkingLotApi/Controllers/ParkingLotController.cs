@@ -3,7 +3,7 @@ namespace ParkingLotApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api")]
 public class ParkingLotController : ControllerBase
 {
     [HttpGet]

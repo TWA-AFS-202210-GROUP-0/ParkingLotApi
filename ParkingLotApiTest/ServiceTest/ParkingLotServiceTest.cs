@@ -1,4 +1,4 @@
-namespace ParkingLotApiTest;
+namespace ParkingLotApiTest.ServiceTest;
 
 public class UnitTest1
 {
