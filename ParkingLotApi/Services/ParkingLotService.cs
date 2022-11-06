@@ -43,7 +43,29 @@ namespace ParkingLotApi.Services
         {
             var parkingLot = await parkingLotDbcontext.ParkingLots.FirstOrDefaultAsync(
                 parkinglot => parkinglot.Id == id);
-            return new ParkingLotDto(parkingLot);
+            if (parkingLot != null)
+            {
+                return new ParkingLotDto(parkingLot);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<ParkingLotDto> UpdateById(int id, ParkingLotDto parkingLotDto)
+        {
+            var parkingLot = await parkingLotDbcontext.ParkingLots.FirstOrDefaultAsync(
+                parkinglot => parkinglot.Id == id);
+            if (parkingLot != null)
+            {
+                parkingLot.Capacity = parkingLotDto.Capacity;
+                return new ParkingLotDto(parkingLot);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task DeleteParkingLot(int id)

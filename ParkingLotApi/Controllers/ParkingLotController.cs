@@ -29,11 +29,19 @@ namespace ParkingLotApi.Controllers
                 : BadRequest();
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotCapacityById(
+            [FromRoute] int id, [FromBody] ParkingLotDto parkingLotDto)
+        {
+            var parkingLot = await parkingLotService.UpdateById(id, parkingLotDto);
+            return parkingLot != null ? parkingLot : NotFound();
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ParkingLotDto>> GetById(int id)
         {
             var parkingLot = await parkingLotService.GetById(id);
-            return Ok(parkingLot);
+            return parkingLot != null ? Ok(parkingLot) : NotFound();
         }
 
         [HttpDelete("{id}")]
