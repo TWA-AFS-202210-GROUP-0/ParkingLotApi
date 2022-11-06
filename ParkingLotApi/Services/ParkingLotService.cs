@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ParkingLotApi.Repository;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +17,23 @@ namespace ParkingLotApi.Services
             this.parkingLotDbcontext = parkingLotDbcontext;
         }
 
-        public async Task<int> AddNewParkingLot(ParkingLotDto parkingLotDto)
+        public async Task<ParkingLotEntity> AddNewParkingLot(ParkingLotDto parkingLotDto)
         {
-            //1. convert dto to entity
-            ParkingLotEntity entity = parkingLotDto.ToEntity();
-            //2. save entity to db
-            await parkingLotDbcontext.ParkingLots.AddAsync(entity);
-            await parkingLotDbcontext.SaveChangesAsync();
-            //3. return company id
-            return entity.Id;
+            if ((parkingLotDbcontext.ParkingLots.Where(parkinglot => parkinglot.Name == parkingLotDto.Name).ToList()
+                    .Count == 0) && (parkingLotDto.Capacity > 0))
+            {
+                //1. convert dto to entity
+                ParkingLotEntity entity = parkingLotDto.ToEntity();
+                //2. save entity to db
+                await parkingLotDbcontext.ParkingLots.AddAsync(entity);
+                await parkingLotDbcontext.SaveChangesAsync();
+                //3. return company id
+                return entity;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<ParkingLotDto> GetById(int id)

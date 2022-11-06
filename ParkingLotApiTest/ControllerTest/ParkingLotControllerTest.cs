@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading.Tasks;
 using ParkingLotApi;
 using Xunit;
@@ -34,6 +35,47 @@ namespace ParkingLotApiTest.ControllerTest
             var createdParkingLot = await ParseObject<ParkingLotDto>(response);
             // then
             Assert.Equivalent(parkingLot, createdParkingLot);
+        }
+
+        [Fact]
+        public async Task Should_add_parking_lot_FAIL_when_capacity_minus()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLot = new ParkingLotDto
+            {
+                Capacity = -20,
+                Location = "536 South Forest Avenue",
+                Name = "South Forest"
+            };
+            // when
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            // then
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Should_add_parking_lot_FAIL_when_name_has_existed()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLot = new ParkingLotDto
+            {
+                Capacity = 10,
+                Location = "536 South Forest Avenue",
+                Name = "South Forest"
+            };
+            ParkingLotDto parkingLot2 = new ParkingLotDto
+            {
+                Capacity = 10,
+                Location = "536 South Forest Avenue",
+                Name = "South Forest"
+            };
+            // when
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot2));
+            // then
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         public async Task<T> ParseObject<T>(HttpResponseMessage response)

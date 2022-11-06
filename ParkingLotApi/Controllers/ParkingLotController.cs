@@ -19,10 +19,12 @@ public class ParkingLotsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
+    public async Task<ActionResult<ParkingLotDto>> AddParkingLot([FromBody] ParkingLotDto parkingLotDto)
     {
-        int id = await this.parkingLotService.AddNewParkingLot(parkingLotDto);
-        return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
+        var parkinglot = await this.parkingLotService.AddNewParkingLot(parkingLotDto);
+        return parkinglot != null
+            ? CreatedAtAction(nameof(GetById), new { id = parkinglot.Id }, parkingLotDto)
+            : BadRequest();
     }
 
     [HttpGet("{id}")]
