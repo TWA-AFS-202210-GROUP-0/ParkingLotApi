@@ -1,14 +1,14 @@
-namespace EFCoreRelationshipsPracticeTest.ControllerTest
-{
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Net.Mime;
-    using System.Text;
-    using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using ParkingLotApi.Dto;
-    using ParkingLotApiTest;
+using Newtonsoft.Json;
+using ParkingLotApi.Dto;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Mime;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace ParkingLotApiTest.ControllerTest
+{
+    [Collection("Our Test Collection #2")]
     public class ParkingLotControllerTest : TestBase
     {
         public ParkingLotControllerTest(CustomWebApplicationFactory<Program> factory)
@@ -26,7 +26,7 @@ namespace EFCoreRelationshipsPracticeTest.ControllerTest
                 Name = "IBM",
                 Capacity = 10,
                 Location = "xx"
-        };
+            };
 
             // when
             var httpContent = JsonConvert.SerializeObject(companyDto);
