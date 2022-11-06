@@ -17,7 +17,7 @@ namespace ParkingLotApiTest.ControllerTest
         {
         }
 
-        [Fact(Skip = "To do fulture")]
+        [Fact]
         public async Task Should_create_parkingLot_success()
         {
             // given
