@@ -25,8 +25,7 @@ public class ParkingLotsController : ControllerBase
         {
             var id = await this.parkingLotService.AddParkingLot(parkingLotDto);
 
-            //return CreatedAtAction(nameof(AddParkingLot), new { id = id }, parkingLotDto);
-            return Created($"/ParkingLots/{id}", parkingLotDto);
+            return CreatedAtAction(nameof(GetById), new { id = id }, parkingLotDto);
         }
         catch (WrongNameException e)
         {

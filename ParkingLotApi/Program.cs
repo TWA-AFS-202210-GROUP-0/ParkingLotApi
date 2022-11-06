@@ -15,6 +15,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<ParkingLotService>();
+builder.Services.AddTransient<ParkingOrderService>();
 builder.Services.AddDbContext<ParkingLotContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Default");
