@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Reflection.Metadata.Ecma335;
@@ -36,6 +37,25 @@ namespace ParkingLotApiTest.ControllerTest
             var dtoResult = Assert.IsType<ParkingLotDto>(createdResult.Value);
             Assert.Equal("SLB",dtoResult.Name);
             Assert.Equal(201,createdResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task should_fail_create_parking_lot()
+        {
+            //Given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.AddParkingLot(It.IsAny<ParkingLotDto>())).Throws<DuplicateNameException>();
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //When
+            var actionResult = await parkingLotController.CreateParkingLot(new ParkingLotDto()
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "TUSPark",
+            });
+            //Then
+            Assert.IsType<ConflictResult>(actionResult.Result);
+
         }
     }
 }

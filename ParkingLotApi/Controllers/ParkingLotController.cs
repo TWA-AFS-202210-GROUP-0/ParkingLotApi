@@ -29,7 +29,7 @@ public class ParkingLotController : ControllerBase
         }
         catch (DuplicateNameException e)
         {
-            return Conflict(e.Message);
+            return new ConflictResult();
         }
     }
 }

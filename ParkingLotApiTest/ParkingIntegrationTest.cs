@@ -22,7 +22,7 @@ namespace ParkingLotApiTest.ControllerTest
             return factory.CreateClient();
         }
 
-        [Fact]
+        [Fact(Skip = "fast")]
         public async Task Should_create_new_parking_lot()
         {
             //Given
