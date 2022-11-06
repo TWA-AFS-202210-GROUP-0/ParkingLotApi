@@ -22,5 +22,10 @@ namespace ParkingLotApiTest.ControllerTest
 
             Assert.Equal("Hello World", responseBody);
         }
+
+        public async Task Should_add_new_parking_lot()
+        {
+
+        }
     }
 }

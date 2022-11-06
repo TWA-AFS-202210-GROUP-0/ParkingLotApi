@@ -13,7 +13,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ParkingLotContext>(options =>
+builder.Services.AddDbContext<ParkingContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Default");
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
@@ -22,7 +22,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ParkingLotContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ParkingContext>();
 
     if (dbContext.Database.ProviderName.ToLower().Contains("mysql"))
     {
