@@ -111,5 +111,31 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(parkingLotDTO.Location, parkingLot.Location);
         }
 
+        [Fact]
+        public async Task Should_update_one_parking_lot_capacity_successfully()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDTO parkingLotDTO = new ParkingLotDTO
+            {
+                Name = "hi",
+                Capacity = 1,
+                Location = "hihi",
+            };
+            var requestBody = CreateRequestBody(parkingLotDTO);
+            var response = await client.PostAsync("/parkinglots", requestBody);
+            var id = await DeserializeResponse<int>(response);
+            requestBody = CreateRequestBody(11);
+
+            //when
+            var getResponse = await client.PatchAsync($"/parkinglots/{id}", requestBody);
+
+            // then
+            var parkingLot = await DeserializeResponse<ParkingLotDTO>(getResponse);
+            Assert.Equal(parkingLotDTO.Name, parkingLot.Name);
+            Assert.Equal(11, parkingLot.Capacity);
+            Assert.Equal(parkingLotDTO.Location, parkingLot.Location);
+        }
+
     }
 }
