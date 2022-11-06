@@ -1,5 +1,6 @@
 namespace ParkingLotApi.Controllers;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Services;
 using System;
@@ -72,11 +73,23 @@ public class ParkingLotsController : ControllerBase
     }
 
     [HttpPost("{id}/orders")]
-    public async Task<ActionResult<OrderDTO>> GetOrdersById([FromRoute] int id, [FromBody] string carPlate)
+    public async Task<ActionResult<OrderDTO>> CreateOrdersById([FromRoute] int id, [FromBody] string carPlate)
     {
-        var orderDTO = await parkingLotService.AddCarInParkingLot(id, carPlate);
-        if (orderDTO == null) { return NotFound($"Not found parking lot with id {id}"); }
-        return Ok(orderDTO);
+        try
+        {
+            var orderDTO = await parkingLotService.AddCarInParkingLot(id, carPlate);
+            if (orderDTO == null) { return NotFound($"Not found parking lot with id {id}"); }
+            return Ok(orderDTO);
+        }catch (Exception ex)
+        {
+            return Problem(
+                type: "/docs/errors/forbidden",
+                title: "Forbidden",
+                detail: ex.Message,
+                statusCode: StatusCodes.Status403Forbidden,
+                instance: HttpContext.Request.Path
+            );
+        }
     }
 
     [HttpPut("{id}/orders")]
