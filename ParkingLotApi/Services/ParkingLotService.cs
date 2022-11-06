@@ -60,6 +60,8 @@ namespace ParkingLotApi.Services
             if (parkingLot != null)
             {
                 parkingLot.Capacity = parkingLotDto.Capacity;
+                //await parkingLotDbcontext.ParkingLots.AddAsync(parkingLot);
+                //await parkingLotDbcontext.SaveChangesAsync();
                 return new ParkingLotDto(parkingLot);
             }
             else
@@ -77,6 +79,8 @@ namespace ParkingLotApi.Services
                 var orderNumber = parkingLotDto.ParkingOrderDto.Where(_ => _.OrderStatus == OrderStatus.OPEN).ToList().Count;
                 parkingLot.Availibility = parkingLot.Capacity - orderNumber;
                 parkingLot.ParkingOrder = parkingLotDto.ParkingOrderDto.Select(_ => _.ToEntity()).ToList();
+               // await parkingLotDbcontext.ParkingLots.AddAsync(parkingLot);
+               // await parkingLotDbcontext.SaveChangesAsync();
                 return new ParkingLotDto(parkingLot);
             }
             else

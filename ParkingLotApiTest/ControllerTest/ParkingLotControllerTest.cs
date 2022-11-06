@@ -228,9 +228,9 @@ namespace ParkingLotApiTest.ControllerTest
             var url = responsePost.Headers.Location + "/orders";
             var responsePut = await client.PutAsync(url, SerializedObject(parkingLotwithFullBefore));
             var response = await client.PutAsync(url, SerializedObject(parkingLotwithFullAfter));
-            var createdParkingLot = await ParseObject<ParkingLotDto>(response);
             // then
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            //Assert.Equal("The Parking Lot is Full!", response.Headers.Warning);
 
         }
 

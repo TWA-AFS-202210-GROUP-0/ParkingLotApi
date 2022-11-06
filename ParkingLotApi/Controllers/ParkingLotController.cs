@@ -50,7 +50,7 @@ namespace ParkingLotApi.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest("The Parking Lot is Full!");
                 }
             }
             else
