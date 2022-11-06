@@ -106,6 +106,28 @@ public class ParkingLotServiceTest: TestBase
         Assert.Equal(parkingLotDTO.Location, parkingLot.Location);
     }
 
+    [Fact]
+    public async Task Should_update_one_parking_lot_capacity()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+        {
+            Name = "hi",
+            Capacity = 1,
+            Location = "hihi",
+        };
+
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
+
+        // when
+        var parkingLot = await parkingLotService.UpdateParkingLotCapacity(id, 11);
+
+        // then
+        Assert.Equal(11, parkingLot.Capacity);
+    }
+
     private ParkingLotContext GetParkingLotContext()
     {
         var scope = Factory.Services.CreateScope();
