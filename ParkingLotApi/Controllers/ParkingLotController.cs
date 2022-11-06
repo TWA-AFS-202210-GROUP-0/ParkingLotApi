@@ -56,8 +56,5 @@ namespace ParkingLotApi.Controllers
         {
             return this.parkingLotService.GetParkingLots(pageIndex);
         }
-
-
     }
 }
-

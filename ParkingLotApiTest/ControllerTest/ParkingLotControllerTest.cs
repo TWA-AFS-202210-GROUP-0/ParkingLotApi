@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using ParkingLotApi;
@@ -9,6 +10,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
+using ParkingLotApi.Models;
 
 namespace ParkingLotApiTest.ControllerTest
 {
@@ -32,6 +34,26 @@ namespace ParkingLotApiTest.ControllerTest
             Location = "536 South Forest Avenue",
             Name = "South Forest"
         };
+
+        ParkingLotDto parkingLotwithOrder = new ParkingLotDto
+        {
+            Capacity = 20,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest",
+            Availibility = 20,
+            ParkingOrderDto = new List<ParkingOrderDto>()
+            {
+                new ParkingOrderDto()
+                {
+                    CarPlateNumber = "AUCCD",
+                    CreateTime = DateTime.Now,
+                    NameOfParkingLot = "South Forest",
+                    Number = 1,
+                    OrderStatus = OrderStatus.OPEN
+                },
+            },
+        };
+
 
         ParkingLotDto parkingLot2 = new ParkingLotDto
         {
@@ -60,10 +82,28 @@ namespace ParkingLotApiTest.ControllerTest
         }
 
         [Fact]
+        public async Task Should_add_Order_to_a_parking_lot_success()
+        {
+            // given
+            var client = GetClient();
+            // when
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLotwithOrder));
+            var createdParkingLot = await ParseObject<ParkingLotDto>(response);
+            // then
+            Assert.Equivalent(parkingLotwithOrder, createdParkingLot);
+        }
+
+        [Fact]
         public async Task Should_add_parking_lot_FAIL_when_capacity_minus()
         {
             // given
             var client = GetClient();
+            ParkingLotDto parkingLot = new ParkingLotDto
+            {
+                Capacity = -10,
+                Location = "536 South Forest Avenue",
+                Name = "South Forest"
+            };
             // when
             var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
             // then
