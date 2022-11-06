@@ -142,27 +142,48 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(HttpStatusCode.NotFound, responsePosted.StatusCode);
         }
 
-        [Fact(Skip = "tode")]
+        [Fact]
         public async Task Should_get_parkingLot_of_one_page_success()
         {
             // given
             var client = GetClient();
-            ParkingLotDto parkingLotDto = new ParkingLotDto
-            {
-                Name = "SLB",
-                Capacity = 10,
-                Location = "Tus"
-            };
-            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
-            var content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
-            await client.PostAsync("/parkingLots", content);
+            var parkingLotDtosPosted = await AddTestParkingLots(client);
             // when
             int page = 2;
             var response = await client.GetAsync($"parkingLots/byPage?page={page}");
             // then
             var body = await response.Content.ReadAsStringAsync();
-            var parkingLotDtos = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
-            Assert.Equal(parkingLotDto.Name, parkingLotDtos[0].Name);
+            var parkingLotDtosGotton = JsonConvert.DeserializeObject<List<ParkingLotDto>>(body);
+            Assert.Equal(parkingLotDtosPosted[15].Name, parkingLotDtosGotton[0].Name);
+        }
+
+        private async Task<List<ParkingLotDto>> AddTestParkingLots(HttpClient client)
+        {
+            var parkingLotDtos = new List<ParkingLotDto>();
+            parkingLotDtos.Add(generateParkingLotDto("SLB", 10, "TUS"));
+            for (int i = 0; i < 14; i++)
+            {
+                parkingLotDtos.Add(generateParkingLotDto($"TW{i}", 10, $"TUS{i}"));
+            }
+            parkingLotDtos.Add(generateParkingLotDto("Intel", 30, "PKU"));
+            foreach (var parkingLotDto in parkingLotDtos)
+            {
+                var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+                var content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+                await client.PostAsync("/parkingLots", content);
+            }
+
+            return parkingLotDtos;
+        }
+
+        private ParkingLotDto generateParkingLotDto(string name, int capacity, string location)
+        {
+            return new ParkingLotDto
+            {
+                Name = name,
+                Capacity = capacity,
+                Location = location
+            };
         }
     }
 }

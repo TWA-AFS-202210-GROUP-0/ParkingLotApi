@@ -67,9 +67,15 @@ namespace ParkingLotApi.Controllers
 
         [HttpGet]
         [Route("byPage")]
-        public async Task<List<ParkingLotDto>> GetParkingLotsByPage([FromQuery] int page)
-        {
-            return await _parkingLotService.GetAll();
+        public async Task<ActionResult<List<ParkingLotDto>>> GetParkingLotsByPage([FromQuery] int page)
+        { 
+            var parkingLotDtos = await _parkingLotService.GetParkingLotByPage(page);
+            if (parkingLotDtos == null)
+            {
+                return Accepted();
+            }
+
+            return parkingLotDtos;
         }
     }
 }
