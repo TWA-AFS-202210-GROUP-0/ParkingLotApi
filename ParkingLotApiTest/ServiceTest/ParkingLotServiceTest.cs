@@ -55,13 +55,13 @@ namespace ParkingLotApiTest.ServiceTest
             parkingLotService.AddParkingLot(parkingLotDto);
             parkingLotService.AddParkingLot(parkingLotDto1);
             // when
-            var parkingLotDtos = parkingLotService.GetAll();
+            var parkingLotDtos = await parkingLotService.GetAll();
             // then
             Assert.Equal(2, parkingLotDtos.Count());
         }
 
         [Fact]
-        public void Should_get_a_parkingLot_by_id_success()
+        public async Task Should_get_a_parkingLot_by_id_success()
         {
             // given
             var context = GetParkingLotDbContext();
@@ -72,15 +72,15 @@ namespace ParkingLotApiTest.ServiceTest
                 Location = "Tus"
             };
             ParkingLotService parkingLotService = new ParkingLotService(context);
-            var id = parkingLotService.AddParkingLot(parkingLotDto);
+            var id = await parkingLotService.AddParkingLot(parkingLotDto);
             // when
-            var parkingLotDtoWithSpecialId = parkingLotService.GetParkingLotById(id);
+            var parkingLotDtoWithSpecialId = await parkingLotService.GetParkingLotById(id);
             // then
             Assert.Equal(parkingLotDto.Name, parkingLotDtoWithSpecialId.Name);
         }
 
         [Fact]
-        public void Should_delete_a_parkingLot_by_id_success()
+        public async Task Should_delete_a_parkingLot_by_id_success()
         {
             // given
             var context = GetParkingLotDbContext();
@@ -91,10 +91,10 @@ namespace ParkingLotApiTest.ServiceTest
                 Location = "Tus"
             };
             ParkingLotService parkingLotService = new ParkingLotService(context);
-            var id = parkingLotService.AddParkingLot(parkingLotDto);
+            var id = await parkingLotService.AddParkingLot(parkingLotDto);
             // when
-            var response = parkingLotService.DeleteParkingLotById(id);
-            var foundResult = parkingLotService.GetParkingLotById(id);
+            var response = await parkingLotService.DeleteParkingLotById(id);
+            var foundResult = await parkingLotService.GetParkingLotById(id);
             // then
             Assert.Equal(parkingLotDto.Name, response.Name);
             Assert.Null(foundResult);

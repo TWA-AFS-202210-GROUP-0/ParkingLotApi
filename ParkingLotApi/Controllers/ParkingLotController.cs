@@ -18,26 +18,39 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpGet]
-        public List<ParkingLotDto> List()
+        public async Task<List<ParkingLotDto>> List()
         {
-            return _parkingLotService.GetAll();
+            return await _parkingLotService.GetAll();
         }
 
         [HttpPost]
-        public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
+        public async Task<ActionResult<int>> AddParkingLot(ParkingLotDto parkingLotDto)
         {
             if (parkingLotDto.Capacity < 0)
             {
                 return Accepted();
             }
 
-            var id = _parkingLotService.AddParkingLot(parkingLotDto);
+            var id = await _parkingLotService.AddParkingLot(parkingLotDto);
             if (id == -1)
             {
                 return Conflict();
             }
 
-            return Ok(parkingLotDto);
+            return CreatedAtAction(nameof(GetParkingLotById), new { id = id }, id);
+        }
+
+        [HttpGet("{id}")]
+
+        public async Task<ActionResult<ParkingLotDto>> GetParkingLotById([FromRoute]int id)
+        {
+            var parkingLotDt = await _parkingLotService.GetParkingLotById(id);
+            if (parkingLotDt == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(parkingLotDt);
         }
     }
 }

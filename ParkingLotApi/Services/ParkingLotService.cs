@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Models;
@@ -15,13 +16,13 @@ namespace ParkingLotApi.Services
             _parkingLotDbContext = parkingLotDbContext;
         }
 
-        public List<ParkingLotDto> GetAll()
+        public async Task<List<ParkingLotDto>> GetAll()
         {
             var parkingLots= _parkingLotDbContext.ParkingLots;
             return parkingLots.Select(parkingLotEntity => new ParkingLotDto(parkingLotEntity)).ToList();
         }
 
-        public int AddParkingLot(ParkingLotDto parkingLotDto)
+        public async Task<int> AddParkingLot(ParkingLotDto parkingLotDto)
         {
             var parkingLotEntity = parkingLotDto.ToEntity();
             var foundParkingLotEntity = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Name == parkingLotEntity.Name);
@@ -34,7 +35,7 @@ namespace ParkingLotApi.Services
             return parkingLotEntity.Id;
         }
 
-        public ParkingLotDto GetParkingLotById(int id)
+        public async Task<ParkingLotDto> GetParkingLotById(int id)
         {
             var foundParkingLotEntity = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Id == id);
             if (foundParkingLotEntity == null)
@@ -45,7 +46,7 @@ namespace ParkingLotApi.Services
             return new ParkingLotDto(foundParkingLotEntity);
         }
 
-        public ParkingLotDto DeleteParkingLotById(int id)
+        public async Task<ParkingLotDto> DeleteParkingLotById(int id)
         {
             var foundParkingLotEntity = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Id == id);
             if (foundParkingLotEntity == null)

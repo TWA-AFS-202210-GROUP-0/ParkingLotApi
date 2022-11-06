@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ParkingLotApi.Dtos;
 
 namespace ParkingLotApi.Services;
 
 public interface IParkingLotService
 {
-    List<ParkingLotDto> GetAll();
-    int AddParkingLot(ParkingLotDto parkingLotDto);
+    Task<List<ParkingLotDto>> GetAll();
+    Task<int> AddParkingLot(ParkingLotDto parkingLotDto);
+    Task<ParkingLotDto> DeleteParkingLotById(int id);
+    Task<ParkingLotDto> GetParkingLotById(int id);
 }
