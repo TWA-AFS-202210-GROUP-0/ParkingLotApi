@@ -155,5 +155,75 @@ namespace ParkingLotApiTest.ControllerTest
             //Then
             Assert.IsType(typeof(NotFoundResult), actionResult.Result);
         }
+
+        [Fact]
+        public async Task Should_return_parkinglot_by_id()
+        {
+            //given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.GetParkingLotById(It.IsAny<int>()))
+                .ReturnsAsync(new ParkingLotDto()
+                {
+                    Name = "SLB",
+                    Capacity = 10,
+                    Location = "TUSPark"
+                });
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //when
+            var actionResult = await parkingLotController.GetParkingLotsById(2);
+            //Then
+            var getResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            var dtoResult = Assert.IsType<ParkingLotDto>(getResult.Value);
+            Assert.Equal("SLB", dtoResult.Name);
+        }
+
+        [Fact]
+        public async Task should_fail_get_by_id()
+        {
+            //given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.GetParkingLotById(It.IsAny<int>()))
+                .Throws<NullReferenceException>();
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //when
+            var actionResult = await parkingLotController.GetParkingLotsById(2);
+            //Then
+            Assert.IsType(typeof(NotFoundResult),actionResult.Result);
+        }
+
+        [Fact]
+        public async Task should_update_parking_lot()
+        {
+            //given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.UpdateParkingLot(It.IsAny<int>(), It.IsAny<ParkingLotDto>()))
+                .ReturnsAsync(new ParkingLotDto()
+                {
+                    Name = "SLB",
+                    Capacity = 10,
+                    Location = "TUSPark",
+                });
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //when
+            var actionResult = await parkingLotController.PutParkingLot(2, new ParkingLotDto());
+            //Then
+            var putResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            var dtoResult = Assert.IsType<ParkingLotDto>(putResult.Value);
+            Assert.Equal("SLB",dtoResult.Name);
+        }
+
+        [Fact]
+        public async Task should_not_update_parking_lot_when_not_fount()
+        {
+            //given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.UpdateParkingLot(It.IsAny<int>(), It.IsAny<ParkingLotDto>()))
+                .Throws<NullReferenceException>();
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //when
+            var actionResult = await parkingLotController.PutParkingLot(2, new ParkingLotDto());
+            //Then
+            Assert.IsType(typeof(NotFoundResult), actionResult.Result);
+        }
     }
 }

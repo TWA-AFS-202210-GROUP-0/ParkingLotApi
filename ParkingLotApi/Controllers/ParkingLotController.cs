@@ -34,7 +34,7 @@ public class ParkingLotController : ControllerBase
         }
         catch (DuplicateNameException e)
         {
-            return new ConflictResult();
+            return Conflict();
         }
     }
 
@@ -44,11 +44,11 @@ public class ParkingLotController : ControllerBase
         try
         {
             await parkingLotService.DeleteParkingLot(id, name);
-            return new OkResult();
+            return Ok();
         }
         catch (NullReferenceException e)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
@@ -66,10 +66,35 @@ public class ParkingLotController : ControllerBase
         }
         catch (NullReferenceException e)
         {
-            return new NotFoundResult();
+            return NotFound();
         }
     }
 
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ParkingLotDto>> GetParkingLotsById([FromRoute] int id)
+    {
+        try
+        {
+            var parkingLot = await parkingLotService.GetParkingLotById(id);
+            return Ok(parkingLot);
+        }
+        catch (NullReferenceException e)
+        {
+            return NotFound();
+        }
+    }
 
-
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ParkingLotDto>> PutParkingLot([FromRoute]int id, [FromBody] ParkingLotDto parkingLotDto)
+    {
+        try
+        {
+            var updatedParkingLotDto = await parkingLotService.UpdateParkingLot(id, parkingLotDto);
+            return Ok(updatedParkingLotDto);
+        }
+        catch (NullReferenceException ex)
+        {
+            return NotFound();
+        }
+    }
 }

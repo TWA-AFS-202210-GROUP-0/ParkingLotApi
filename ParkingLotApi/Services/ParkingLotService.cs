@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Repository;
@@ -7,16 +9,23 @@ namespace ParkingLotApi.Services
 {
     public class ParkingLotService : IParkingLotService
     {
-        private readonly ParkingDbContext _context;
+        private readonly ParkingDbContext _parkingDbContext;
 
-        public ParkingLotService(ParkingDbContext parkingDbContext)
+        public ParkingLotService(ParkingDbContext parkingDbParkingDbContext)
         {
-            this._context = parkingDbContext;
+            this._parkingDbContext = parkingDbParkingDbContext;
         }
 
         public async Task<int> AddParkingLot(ParkingLotDto parkingLotDto)
         {
-            return 1;
+            if(_parkingDbContext.ParkingLots.ToList().FirstOrDefault(e => e.Name == parkingLotDto.Name) != null)
+            {
+                throw new DuplicateNameException();
+            }
+            var parkingLotEntity = DtoConverter.ToEntity(parkingLotDto);
+            await _parkingDbContext.ParkingLots.AddAsync(parkingLotEntity);
+            await _parkingDbContext.SaveChangesAsync();
+            return parkingLotEntity.Id;
         }
 
         public async Task<ParkingLotDto> GetParkingLotById(int parkingLotId)
@@ -24,7 +33,7 @@ namespace ParkingLotApi.Services
             return new ParkingLotDto();
         }
 
-        public async Task<ParkingLotDto> UpdateParkingLot(ParkingLotDto parkingLotDto)
+        public async Task<ParkingLotDto> UpdateParkingLot(int id, ParkingLotDto parkingLotDto)
         {
             return new ParkingLotDto();
         }
