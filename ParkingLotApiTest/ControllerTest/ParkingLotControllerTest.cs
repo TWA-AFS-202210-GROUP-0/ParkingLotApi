@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Net.Http;
 using System.Text;
+using System.Collections.Generic;
 
 namespace ParkingLotApiTest.ControllerTest
 {
@@ -78,6 +79,36 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        [Fact]
+        public async Task Should_delete_parking_lot_success()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLot = new ParkingLotDto
+            {
+                Capacity = 10,
+                Location = "536 South Forest Avenue",
+                Name = "South Forest"
+            };
+            ParkingLotDto parkingLot2 = new ParkingLotDto
+            {
+                Capacity = 20,
+                Location = "55 North Paul",
+                Name = "North Paul"
+            };
+            // when
+            var createdParkingLot =
+                await CreateParkinglotForTest(client, parkingLot.Location, parkingLot.Name, parkingLot.Capacity);
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot2));
+            await client.DeleteAsync($"ParkingLots/{createdParkingLot.ToEntity().Id}");
+            var response = await client.GetAsync("ParkingLots");
+            var parkinglots = await ParseObject<List<ParkingLotDto>>(response);
+            // then
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(1, parkinglots.Count);
+        }
+
+
         public async Task<T> ParseObject<T>(HttpResponseMessage response)
         {
             var responseBody = await response.Content.ReadAsStringAsync();
@@ -99,7 +130,7 @@ namespace ParkingLotApiTest.ControllerTest
             parkingLot.Name = name;
             parkingLot.Location = location;
             var postBody = SerializedObject(parkingLot);
-            var response = await httpClient.PostAsync("api/parkinglots", postBody);
+            var response = await httpClient.PostAsync("ParkingLots", postBody);
             var result = await ParseObject<ParkingLotDto>(response);
             return result;
         }
