@@ -42,7 +42,7 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Single(returnParkingLots);
         }
 
-        [Fact(Skip = "To do in fulture")]
+        [Fact]
         public async Task Should_create_parkingLot_fail_when_name_is_repeat()
         {
             // given

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Repository;
 
@@ -22,6 +23,11 @@ namespace ParkingLotApi.Services
         public ParkingLotDto AddParkingLot(ParkingLotDto parkingLotDto)
         {
             var parkingLotEntity = parkingLotDto.ToEntity();
+            var foundParkingLotEntity = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Name == parkingLotEntity.Name);
+            if (foundParkingLotEntity != null)
+            {
+                return null;
+            }
             _parkingLotDbContext.AddAsync(parkingLotEntity);
             _parkingLotDbContext.SaveChangesAsync();
             return parkingLotDto;

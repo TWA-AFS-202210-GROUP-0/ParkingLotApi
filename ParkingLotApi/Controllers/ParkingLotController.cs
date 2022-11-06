@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Services;
@@ -23,10 +24,14 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpPost]
-        public ParkingLotDto AddParkingLot(ParkingLotDto parkingLotDto)
+        public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
         {
-            _parkingLotService.AddParkingLot(parkingLotDto);
-            return parkingLotDto;
+            var postParkingLotDto = _parkingLotService.AddParkingLot(parkingLotDto);
+            if (postParkingLotDto == null)
+            {
+                return Conflict();
+            }
+            return Ok(parkingLotDto);
         }
     }
 }
