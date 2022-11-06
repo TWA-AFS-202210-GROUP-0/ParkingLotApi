@@ -61,5 +61,31 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(0, parkingLots.Count());
         }
 
+        [Fact]
+        public async Task Should_get_parking_lots_by_page()
+        {
+            // given
+            var client = GetClient();
+            for (var i = 0; i < 18; i++)
+            {
+                ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+                {
+                    Name = "hi" + i,
+                    Capacity = 1,
+                    Location = "hihi",
+                };
+                var requestBody = CreateRequestBody(parkingLotDTO);
+                await client.PostAsync("/parkinglots", requestBody);
+            }
+
+            // when
+            var page2ParkingLotsResponse = await client.GetAsync("/parkinglots?pageNumber=2");
+
+            // then
+            var parkingLots = await DeserializeResponse<List<ParkingLotDTO>>(page2ParkingLotsResponse);
+            Assert.Equal(3, parkingLots.Count());
+
+        }
+
     }
 }

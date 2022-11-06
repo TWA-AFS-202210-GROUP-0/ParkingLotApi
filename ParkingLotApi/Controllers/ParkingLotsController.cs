@@ -19,8 +19,13 @@ public class ParkingLotsController : ControllerBase
     }
 
     [HttpGet]
-    public Task<List<ParkingLotDTO>> GetAll()
+    public Task<List<ParkingLotDTO>> GetAll([FromQuery] int? pageNumber)
     {
+        if (pageNumber != null)
+        {
+            return parkingLotService.GetAllParkingLotsByPage((int)pageNumber);
+        }
+
         return parkingLotService.GetAllParkingLots();
     }
 
