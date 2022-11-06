@@ -37,6 +37,24 @@ namespace ParkingLotApi.Services
         public ParkingLotDto GetParkingLotById(int id)
         {
             var foundParkingLotEntity = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Id == id);
+            if (foundParkingLotEntity == null)
+            {
+                return null;
+            }
+
+            return new ParkingLotDto(foundParkingLotEntity);
+        }
+
+        public ParkingLotDto DeleteParkingLotById(int id)
+        {
+            var foundParkingLotEntity = _parkingLotDbContext.ParkingLots.FirstOrDefault(_ => _.Id == id);
+            if (foundParkingLotEntity == null)
+            {
+                return null;
+            }
+
+            _parkingLotDbContext.Remove(foundParkingLotEntity);
+            _parkingLotDbContext.SaveChangesAsync();
             return new ParkingLotDto(foundParkingLotEntity);
         }
     }

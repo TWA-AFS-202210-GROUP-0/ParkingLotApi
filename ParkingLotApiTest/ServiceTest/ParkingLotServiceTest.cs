@@ -79,6 +79,27 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(parkingLotDto.Name, parkingLotDtoWithSpecialId.Name);
         }
 
+        [Fact]
+        public void Should_delete_a_parkingLot_by_id_success()
+        {
+            // given
+            var context = GetParkingLotDbContext();
+            var parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            ParkingLotService parkingLotService = new ParkingLotService(context);
+            var id = parkingLotService.AddParkingLot(parkingLotDto);
+            // when
+            var response = parkingLotService.DeleteParkingLotById(id);
+            var foundResult = parkingLotService.GetParkingLotById(id);
+            // then
+            Assert.Equal(parkingLotDto.Name, response.Name);
+            Assert.Null(foundResult);
+        }
+
         private ParkingLotDbContext GetParkingLotDbContext()
         {
             var scope = Factory.Services.CreateScope();
