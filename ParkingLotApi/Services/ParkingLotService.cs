@@ -37,7 +37,7 @@ namespace ParkingLotApi.Services
         {
             var parkingLot = parkingLotContext.ParkingLots
                 .FirstOrDefault(_ => _.Id == id);
-            parkingLotContext.ParkingLots.Remove(parkingLot);
+            parkingLotContext.ParkingLots.RemoveRange(parkingLot);
             await parkingLotContext.SaveChangesAsync();
         }
 

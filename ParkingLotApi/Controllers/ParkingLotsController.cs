@@ -21,7 +21,7 @@ public class ParkingLotsController : ControllerBase
     [HttpGet]
     public Task<List<ParkingLotDTO>> GetAll()
     {
-        return this.parkingLotService.GetAllParkingLots();
+        return parkingLotService.GetAllParkingLots();
     }
 
     [HttpPost]
@@ -39,5 +39,13 @@ public class ParkingLotsController : ControllerBase
         {
             return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
         }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete([FromRoute] int id)
+    {
+        await parkingLotService.DeleteParkingLot(id);
+
+        return Ok();
     }
 }
