@@ -35,12 +35,14 @@ public class ParkingLotsController : ControllerBase
         try
         {
             var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
-            if (id == -1) {
+            if (id == -1)
+            {
                 return StatusCode((int)HttpStatusCode.Forbidden, "Name or capacity is not acceptable.");
             }
 
             return id;
-        }catch (Exception e)
+        }
+        catch (Exception e)
         {
             return StatusCode((int)HttpStatusCode.InternalServerError, e.Message);
         }
@@ -52,5 +54,12 @@ public class ParkingLotsController : ControllerBase
         await parkingLotService.DeleteParkingLot(id);
 
         return Ok();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ParkingLotDTO>> GetById([FromRoute] int id)
+    {
+        var parkingLotDTO = await parkingLotService.GetParkingLot(id);
+        return Ok(parkingLotDTO);
     }
 }
