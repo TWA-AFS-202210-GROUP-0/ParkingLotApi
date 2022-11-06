@@ -57,6 +57,33 @@ public class ParkingLotServiceTest: TestBase
         Assert.Equal(0, context.ParkingLots.Count());
     }
 
+    [Fact]
+    public async Task Should_get_parking_lot_list_by_page_with_15_in_each_page()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        for (var i = 0; i < 18; i++)
+        {
+            ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+            {
+                Name = "hi" + i,
+                Capacity = 1,
+                Location = "hihi",
+            };
+            await parkingLotService.AddNewParkingLot(parkingLotDTO);
+
+        }
+
+        // when
+        var parkingLotInPage = await parkingLotService.GetAllParkingLotsByPage(2);
+
+        // then
+        Assert.Equal(3, parkingLotInPage.Count());
+
+
+    }
+
     private ParkingLotContext GetParkingLotContext()
     {
         var scope = Factory.Services.CreateScope();
