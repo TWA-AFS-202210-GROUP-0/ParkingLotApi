@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
 using ParkingLotApi;
 using Xunit;
+using Microsoft.AspNetCore.Mvc.Testing;
+using System.Collections.Generic;
 
 namespace ParkingLotApiTest.ControllerTest
 {
-    using Microsoft.AspNetCore.Mvc.Testing;
-    using System.Collections.Generic;
-
+    [Collection("IntegrationTest")]
     public class ParkingLotControllerTest: TestBase
     {
         public ParkingLotControllerTest(CustomWebApplicationFactory<Program> factory)

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace ParkingLotApiTest;
 
+[Collection("IntegrationTest")]
 public class ParkingLotServiceTest: TestBase
 {
     public ParkingLotServiceTest(CustomWebApplicationFactory<Program> factory) : base(factory)
