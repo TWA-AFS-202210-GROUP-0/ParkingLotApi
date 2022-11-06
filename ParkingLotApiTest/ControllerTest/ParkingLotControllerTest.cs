@@ -6,9 +6,9 @@ namespace ParkingLotApiTest.ControllerTest
 {
     using Microsoft.AspNetCore.Mvc.Testing;
 
-    public class HelloWorldControllerTest
+    public class ParkingLotControllerTest
     {
-        public HelloWorldControllerTest()
+        public ParkingLotControllerTest()
         {
         }
 
