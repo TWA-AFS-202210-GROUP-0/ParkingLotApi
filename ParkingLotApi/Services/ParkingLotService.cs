@@ -84,7 +84,7 @@ namespace ParkingLotApi.Services
             }
 
             parkingLotEntityFound.Capacity = newCapacity;
-            _parkingLotDbContext.ParkingLots.Update(parkingLotEntityFound);
+            var parkingLotEntity = _parkingLotDbContext.ParkingLots.Update(parkingLotEntityFound);
             _parkingLotDbContext.SaveChangesAsync();
             return new ParkingLotDto(parkingLotEntityFound);
         }

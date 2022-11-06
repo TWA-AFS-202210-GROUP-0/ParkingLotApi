@@ -132,9 +132,9 @@ namespace ParkingLotApiTest.ServiceTest
             // when
             var updateParkingLotCapacityReturn = await parkingLotService.UpdateParkingLotCapacity(id, newCapacity);
             // then
-            Assert.Equal(11, updateParkingLotCapacityReturn.Capacity);
+            Assert.Equal(newCapacity, updateParkingLotCapacityReturn.Capacity);
             var parkingLotDtoUpdated = await parkingLotService.GetParkingLotById(id);
-            Assert.Equal(11, parkingLotDtoUpdated.Capacity);
+            Assert.Equal(newCapacity, parkingLotDtoUpdated.Capacity);
         }
 
         private List<ParkingLotDto> AddTestParkingLots(ParkingLotService parkingLotService)
