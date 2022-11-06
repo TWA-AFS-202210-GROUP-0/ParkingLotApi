@@ -28,8 +28,17 @@ namespace ParkingLotApi.Services
                 await parkingLotContext.SaveChangesAsync();
                 return parkingOrderEntity.Id;
             }
-            throw new NoSpaceException("This parking lot is full");
+            throw new NoSpaceException("The parking lot is full");
             
+        }
+
+        public async Task<ParkingOrderDto> ModifyParkingOrderStatus(ParkingOrderDto parkingOrderDto)
+        {
+            var foundParkingOrder = parkingLotContext.ParkingOrders
+                .FirstOrDefault(_ => _.PlateNumber.Equals(parkingOrderDto.PlateNumber));
+            foundParkingOrder.CloseTime = parkingOrderDto.CloseTime;
+            foundParkingOrder.OrderStatus = parkingOrderDto.OrderStatus;
+            return new ParkingOrderDto(foundParkingOrder);
         }
     }
 }

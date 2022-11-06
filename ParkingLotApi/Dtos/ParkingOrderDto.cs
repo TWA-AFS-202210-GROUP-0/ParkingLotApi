@@ -5,8 +5,19 @@ namespace ParkingLotApi.Dtos
 {
     public class ParkingOrderDto
     {
+        private ParkingOrderEntity foundParkingOrder;
+
         public ParkingOrderDto()
         {
+        }
+
+        public ParkingOrderDto(ParkingOrderEntity foundParkingOrder)
+        {
+            PlateNumber = foundParkingOrder.PlateNumber;
+            ParkingLotName = foundParkingOrder.ParkingLotName;
+            CreateTime = foundParkingOrder.CreateTime;
+            CloseTime = foundParkingOrder.CloseTime;
+            OrderStatus = foundParkingOrder.OrderStatus;
         }
 
         public string ParkingLotName { get; set; }
@@ -18,7 +29,7 @@ namespace ParkingLotApi.Dtos
         public ParkingOrderEntity ToEntity()
         {
             var parkingOrderEntity = new ParkingOrderEntity();
-            parkingOrderEntity.ParkingLotName = PlateNumber;
+            parkingOrderEntity.ParkingLotName = ParkingLotName;
             parkingOrderEntity.PlateNumber = PlateNumber;
             parkingOrderEntity.CreateTime = CreateTime;
             parkingOrderEntity.CloseTime = CloseTime;

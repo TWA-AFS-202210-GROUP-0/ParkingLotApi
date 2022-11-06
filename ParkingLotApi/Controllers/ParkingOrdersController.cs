@@ -23,16 +23,20 @@ namespace ParkingLotApi.Controllers
         {
             try
             {
-                var id = await this.parkingOrderService.AddParkingOrder(parkingOrderDto);
-
-                //return CreatedAtAction(nameof(AddParkingLot), new { id = id }, parkingLotDto);
-                return Created($"/ParkingOrders/{id}", parkingOrderDto);
+                var id = await parkingOrderService.AddParkingOrder(parkingOrderDto);
+                return CreatedAtAction(nameof(ModifyStatus), new { id = id }, parkingOrderDto);
             }
             catch(NoSpaceException e)
             {
                 return BadRequest(e.Message);
             }
             
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ParkingOrderDto>> ModifyStatus([FromBody] ParkingOrderDto parkingOrderDto)
+        {
+            var updateParkingOrderDto = await parkingOrderService.ModifyParkingOrderStatus(parkingOrderDto);
+            return Ok(updateParkingOrderDto);
         }
     }
 }

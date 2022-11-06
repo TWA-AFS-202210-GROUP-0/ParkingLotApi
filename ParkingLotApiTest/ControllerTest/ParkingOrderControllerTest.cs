@@ -1,5 +1,6 @@
 namespace ParkingLotApiTest.ControllerTest
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
@@ -27,6 +28,14 @@ namespace ParkingLotApiTest.ControllerTest
         {
             // given
             var client = GetClient();
+            var parkingLot = new ParkingLotDto
+            {
+                Name = "ParkingLotA",
+                Capacity = 50,
+                Location = "Street A",
+            };
+            var parkingLotContent = BuildRequestBody(parkingLot);
+            await client.PostAsync("/parkingLots", parkingLotContent);
             var parkingOrder = new ParkingOrderDto
             {
                 ParkingLotName = "ParkingLotA",
@@ -43,6 +52,40 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             var createdParkingOrder = await DeserializeResponse<ParkingOrderDto>(response);
             Assert.Equivalent(parkingOrder,createdParkingOrder);
+        }
+
+        [Fact]
+        public async Task Should_modify_the_status_of_order_when_car_leaving()
+        {
+            var client = GetClient();
+            var parkingLot = new ParkingLotDto
+            {
+                Name = "ParkingLotA",
+                Capacity = 50,
+                Location = "Street A",
+            };
+            var parkingLotContent = BuildRequestBody(parkingLot);
+            await client.PostAsync("/parkingLots", parkingLotContent);
+            var parkingOrder = new ParkingOrderDto
+            {
+                ParkingLotName = "ParkingLotA",
+                PlateNumber = "A12345",
+                CreateTime = System.DateTime.Now,
+                OrderStatus = true,
+            };
+            var parkingOrderContent = BuildRequestBody(parkingOrder);
+            var response = await client.PostAsync("/parkingOrders", parkingOrderContent);
+            parkingOrder.CloseTime = DateTime.Now;
+            parkingOrder.OrderStatus = false;
+            var updateParkingOrderContent = BuildRequestBody(parkingOrder);
+
+            // when 
+            var updateResponse = await client.PutAsync(response.Headers.Location, updateParkingOrderContent);
+
+            // then
+            Assert.Equal(HttpStatusCode.OK, updateResponse.StatusCode);
+            var updateParkingOrder = await DeserializeResponse<ParkingOrderDto>(updateResponse);
+            Assert.Equal(parkingOrder.OrderStatus, updateParkingOrder.OrderStatus);
         }
 
         private static StringContent BuildRequestBody<T>(T requestObject)
