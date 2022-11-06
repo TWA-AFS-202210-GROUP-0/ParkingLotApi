@@ -85,8 +85,9 @@ namespace ParkingLotApi.Services
         public async Task<OrderDTO> AddCarInParkingLot(int id, string car)
         {
             var parkingLot = GetParkingLot(id);
+            if (parkingLot == null) { return null;}
 
-            if(IsAtCapacity(id)) { return null; }
+            if( IsAtCapacity(id) ) { throw new Exception("The parking lot is full"); }
 
             var orderEntity = new OrderEntity
             {
@@ -106,7 +107,7 @@ namespace ParkingLotApi.Services
             var parkingLot = GetParkingLot(id);
             return parkingLotContext.Orders
                 .Where(o => o.Id == id)
-                .Where(o => o.Status).Count() > parkingLot.Capacity;
+                .Where(o => o.Status).Count() >= parkingLot.Capacity;
         }
 
         public async Task<OrderDTO> CLoseParkingCarOrder(OrderDTO order)

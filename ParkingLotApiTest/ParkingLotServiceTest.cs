@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ParkingLotApi;
 using ParkingLotApi.Repository;
 using ParkingLotApi.Services;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -153,6 +154,26 @@ public class ParkingLotServiceTest: TestBase
         Assert.Equal("open", order.Status);
         Assert.NotNull(order.OrderNumber);
         Assert.NotNull(order.CreationTime);
+    }
+
+    [Fact]
+    public async Task Should_not_create_order_when_parkinglot_is_full()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+        {
+            Name = "hi",
+            Capacity = 1,
+            Location = "hihi",
+        };
+
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
+        await parkingLotService.AddCarInParkingLot(id, "XXX111");
+
+        var ex = await Assert.ThrowsAsync<Exception>(() => parkingLotService.AddCarInParkingLot(id, "XXX222"));
+        Assert.Equal("The parking lot is full", ex.Message);
     }
 
     [Fact]
