@@ -60,4 +60,11 @@ public class ParkingLotsController : ControllerBase
         var parkingLotDto = await parkingLotService.GetParkingLotById(id);
         return Ok(parkingLotDto);
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ParkingLotDto>> ModifyCapaicty([FromBody] ParkingLotDto parkingLotDto)
+    {
+        var updateParkingLotDto = await parkingLotService.ModifyParkingLotCapacity(parkingLotDto);
+        return Ok(updateParkingLotDto);
+    }
 }
