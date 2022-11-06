@@ -23,5 +23,15 @@ namespace ParkingLotApi.Dtos
         public int? Capacity { get; set; }
 
         public string Location { get; set; }
+
+        public ParkingLotEntity ToEntity()
+        {
+            return new ParkingLotEntity
+            {
+                Capacity = this.Capacity,
+                Name = this.Name,
+                Location = this.Location
+            };
+        }
     }
 }

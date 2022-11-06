@@ -10,6 +10,7 @@ using System.Text;
 
 namespace ParkingLotApiTest.ControllerTest
 {
+    [Collection("aaa")]
     public class ParkingLotControllerTest : TestBase
     {
         public ParkingLotControllerTest(CustomizedWebApplication<Program> factory) : base(factory)
@@ -29,7 +30,7 @@ namespace ParkingLotApiTest.ControllerTest
                 Name = "South Forest"
             };
             // when
-            var response = await client.PostAsync("api/parkinglots", SerializedObject(parkingLot));
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
             var createdParkingLot = await ParseObject<ParkingLotDto>(response);
             // then
             Assert.Equivalent(parkingLot, createdParkingLot);

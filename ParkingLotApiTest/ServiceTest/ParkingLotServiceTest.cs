@@ -1,9 +1,15 @@
-namespace ParkingLotApiTest.ServiceTest;
-
-public class UnitTest1
+namespace ParkingLotApiTest.ServiceTest
 {
-    [Fact]
-    public void Test1()
+    [Collection("aaa")]
+    public class ParkingLotServiceTest : TestBase
     {
+        public ParkingLotServiceTest(CustomizedWebApplication<Program> factory) : base(factory)
+        {
+        }
+
+        [Fact]
+        public void Test1()
+        {
+        }
     }
 }
