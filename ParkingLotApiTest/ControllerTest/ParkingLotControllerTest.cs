@@ -81,7 +81,7 @@ namespace ParkingLotApiTest.ControllerTest
         {
             //Given
             var parkingLotService = new Mock<IParkingLotService>();
-            parkingLotService.Setup(m => m.DeleteParkingLot(It.IsAny<int>(),It.IsAny<string>())).ReturnsAsync("SLB");
+            parkingLotService.Setup(m => m.DeleteParkingLot(It.IsAny<int>(),It.IsAny<string>())).Verifiable();
             var parkingLotController = new ParkingLotController(parkingLotService.Object);
             //when
             var actionResult = await parkingLotController.DeleteParkingLot(1, "SLB");

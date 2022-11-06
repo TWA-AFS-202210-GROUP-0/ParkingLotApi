@@ -43,19 +43,37 @@ namespace ParkingLotApi.Services
 
         public async Task<ParkingLotDto> UpdateParkingLot(int id, ParkingLotDto parkingLotDto)
         {
-            return new ParkingLotDto();
+            {
+                var entityById = await _parkingDbContext.ParkingLots.FirstOrDefaultAsync(e => e.Id == id);
+                if (entityById == null)
+                {
+                    throw new NullReferenceException();
+                }
+                entityById.Capacity = parkingLotDto.Capacity;
+                await _parkingDbContext.SaveChangesAsync();
+
+                return DtoConverter.ToDto(entityById);
+            }
         }
 
         public async Task<List<ParkingLotDto>> GetMultiParkingLots(int skip, int take)
         {
-            return new List<ParkingLotDto>();
+            var parkingLotEntitiess = _parkingDbContext.ParkingLots.OrderBy(e => e.Id).Skip(skip).Take(take);
+                var parkingLotDtos = parkingLotEntitiess.Select(e => DtoConverter.ToDto(e)).ToList();
+            return parkingLotDtos;
         }
 
-        public async Task<string> DeleteParkingLot(int id, string name)
+        public async Task DeleteParkingLot(int id, string name)
         {
-            return name;
+            var entityById = await _parkingDbContext.ParkingLots.FirstOrDefaultAsync(e => e.Id == id);
+            if (entityById == null || entityById.Name != name)
+            {
+                throw new NullReferenceException();
+            }
+
+            _parkingDbContext.Remove(entityById);
+            await _parkingDbContext.SaveChangesAsync();
+            return;
         }
-
-
     }
 }

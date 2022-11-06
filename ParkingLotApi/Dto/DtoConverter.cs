@@ -24,5 +24,7 @@ namespace ParkingLotApi.Dto
                 Location = parkingLotEntity.Location,
             };
         }
+
+
     }
 }

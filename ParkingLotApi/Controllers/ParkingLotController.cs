@@ -29,8 +29,8 @@ public class ParkingLotController : ControllerBase
         }
         try
         {
-            var id = parkingLotService.AddParkingLot(parkingLotDto);
-            return new CreatedResult($"parkinglots/{id}", parkingLotDto);
+            var id = await parkingLotService.AddParkingLot(parkingLotDto);
+            return Created($"parkinglots/{id}", parkingLotDto);
         }
         catch (DuplicateNameException e)
         {

@@ -82,5 +82,47 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.ThrowsAsync<NullReferenceException>(async () =>
                 await ParkingLotService.GetParkingLotById(newParkingLotDto - 1));
         }
+
+        [Fact]
+        public async void Should_update_parkingLot_capacity()
+        {
+            // given
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "TUSPark",
+            };
+            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            // Then
+            var updatedParkingLotDto = await ParkingLotService.UpdateParkingLot(newParkingLotDto, new ParkingLotDto()
+            {
+                Name = "SLB",
+                Capacity = 20,
+                Location = "TUSPark",
+            });
+            //
+            Assert.Equal(20,updatedParkingLotDto.Capacity);
+        }
+
+        [Fact]
+        public async void Should_get_5_parking_lots_on_page_2()
+        {
+            //given
+            for (int i = 0; i < 20; i++)
+            {
+                var parkingLot = new ParkingLotDto()
+                {
+                    Name = $"SLB{i}",
+                    Capacity = i,
+                    Location = "dummy"
+                };
+                await ParkingLotService.AddParkingLot(parkingLot);
+            }
+            //when
+            var parkingLotsInPage = await ParkingLotService.GetMultiParkingLots(15, 15);
+            //Then
+            Assert.Equal(5, parkingLotsInPage.Count);
+        }
     }
 }
