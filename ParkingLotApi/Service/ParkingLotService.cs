@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Repository;
 using System;
@@ -43,8 +44,7 @@ namespace ParkingLotApi.Service
         {
             try
             {
-                var findParkLoting = await parkingLotContext.ParkingLots
-.FirstOrDefaultAsync(c => c.Id == id);
+                var findParkLoting = await parkingLotContext.ParkingLots.FirstOrDefaultAsync(c => c.Id == id);
                 return new ParkingLotDto(findParkLoting);
             }
             catch (Exception e)
@@ -90,6 +90,42 @@ namespace ParkingLotApi.Service
             parkingLotContext.ParkingLots.RemoveRange(findParkLoting);
             await this.parkingLotContext.SaveChangesAsync();
         }
+
+        public async Task<ParkingLotDto> CreateParkingOrder(OrderDto dto)
+        {
+            dto.CreateTime = DateTime.Now;
+            var parkingEntity = await this.GetEntityByName(dto.Name);
+
+            if (parkingEntity.Capacity <= 0)
+            {
+                throw new Exception("The parking lot is full");
+            }
+            parkingEntity.Capacity = parkingEntity.Capacity - 1;
+
+            Order order = dto.toEntity();
+            await parkingLotContext.Orders.AddAsync(order);
+            await this.parkingLotContext.SaveChangesAsync();
+
+            var OrderId = order.Id;
+            parkingEntity.OrderId = OrderId;
+            var parkingDto = new ParkingLotDto(parkingEntity);
+            parkingLotContext.Entry(parkingEntity).CurrentValues.SetValues(parkingDto);
+            await this.parkingLotContext.SaveChangesAsync();
+            return parkingDto;
+        }
+        public async Task<OrderDto> updateOrder(OrderDto dto)
+        {
+            var parkingEntity = await this.GetEntityByName(dto.Name);
+            var order = await parkingLotContext.Orders.FirstOrDefaultAsync(o => o.Id == parkingEntity.OrderId);
+
+            dto.CloseTime = DateTime.Now;
+
+            parkingLotContext.Entry(order).CurrentValues.SetValues(dto);
+
+            await this.parkingLotContext.SaveChangesAsync();
+            return dto;
+        }
+
 
     }
 }

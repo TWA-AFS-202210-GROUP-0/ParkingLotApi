@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ParkingLotApi.Dto;
+using ParkingLotApi.Repository;
 using ParkingLotApi.Service;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace ParkingLotApi.Controllers
             {
                 var id = await this.parkingLotService.AddOrUpdateCompany(ParkingLotDto, false);
 
-                return CreatedAtAction(nameof(GetById), new { id = id }, ParkingLotDto);
+                return Ok(id);
             }
             catch (Exception e)
             {
@@ -78,6 +79,36 @@ namespace ParkingLotApi.Controllers
         {
             await parkingLotService.DeleteCompany(id);
             return this.NoContent();
+        }
+
+        [HttpPost("{Name}/Order")]
+        public async Task<ActionResult<ParkingLotDto>> CreateOrder(OrderDto orderDto)
+        {
+            try
+            {
+                var id = await this.parkingLotService.CreateParkingOrder(orderDto);
+                return CreatedAtAction(nameof(GetById), new { id = id }, orderDto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+        [HttpPut("{Name}/Order")]
+        public async Task<ActionResult<ParkingLotDto>> UpdateOrder(OrderDto orderDto)
+        {
+            try
+            {
+                var dto = await this.parkingLotService.updateOrder(orderDto);
+
+                return Ok(dto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
     }

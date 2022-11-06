@@ -16,6 +16,10 @@ namespace ParkingLotApi.Dto
            this.Name = c.Name; 
            this.Capacity = c.Capacity;
            this.Location = c.Location;
+            if (c.OrderId != null)
+            {
+                this.OrderId = c.OrderId;
+            }
         }
 
         public string Name { get; set; }
@@ -23,6 +27,7 @@ namespace ParkingLotApi.Dto
         public int Capacity { get; set; }
         public string Location { get; set; }
 
+        public int? OrderId { get; set; }
         public ParkingLot ToEntity()
         {
             return new ParkingLot()

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ParkingLotApi.Repository;
 
@@ -10,9 +11,10 @@ using ParkingLotApi.Repository;
 namespace ParkingLotApi.Migrations
 {
     [DbContext(typeof(ParkingLotContext))]
-    partial class ParkingLotContextModelSnapshot : ModelSnapshot
+    [Migration("20221106114109_order")]
+    partial class order
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace ParkingLotApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Order");
                 });
 
             modelBuilder.Entity("ParkingLotApi.Repository.ParkingLot", b =>
@@ -69,7 +71,18 @@ namespace ParkingLotApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OrderId");
+
                     b.ToTable("ParkingLots");
+                });
+
+            modelBuilder.Entity("ParkingLotApi.Repository.ParkingLot", b =>
+                {
+                    b.HasOne("ParkingLotApi.Repository.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId");
+
+                    b.Navigation("Order");
                 });
 #pragma warning restore 612, 618
         }
