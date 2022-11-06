@@ -88,6 +88,47 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.Equal(parkingOrder.OrderStatus, updateParkingOrder.OrderStatus);
         }
 
+        [Fact]
+        public async Task Should_throw_message_when_parking_given_a_full_parking_lot()
+        {
+            // given
+            var client = GetClient();
+            var parkingLot = new ParkingLotDto
+            {
+                Name = "ParkingLotA",
+                Capacity = 1,
+                Location = "Street A",
+            };
+            var parkingLotContent = BuildRequestBody(parkingLot);
+            await client.PostAsync("/parkingLots", parkingLotContent);
+            var parkingOrder = new ParkingOrderDto
+            {
+                ParkingLotName = "ParkingLotA",
+                PlateNumber = "A12345",
+                CreateTime = System.DateTime.Now,
+                OrderStatus = true,
+            };
+            var parkingOrderContent = BuildRequestBody(parkingOrder);
+            await client.PostAsync("/parkingOrders", parkingOrderContent);
+            var parkingOrder2 = new ParkingOrderDto
+            {
+                ParkingLotName = "ParkingLotA",
+                PlateNumber = "B12345",
+                CreateTime = System.DateTime.Now,
+                OrderStatus = true,
+            };
+            var parkingOrderContent2 = BuildRequestBody(parkingOrder2);
+
+            //when 
+            var response = await client.PostAsync("/parkingOrders", parkingOrderContent2);
+
+            //then
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Assert.Equal("The parking lot is full", responseBody);
+
+
+        }
+
         private static StringContent BuildRequestBody<T>(T requestObject)
         {
             var requestJson = JsonConvert.SerializeObject(requestObject);

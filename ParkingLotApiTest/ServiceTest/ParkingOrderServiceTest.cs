@@ -45,8 +45,8 @@ namespace ParkingLotApiTest.ServiceTest
             };
             // when
             // then
-            await Assert.ThrowsAsync<NoSpaceException>(() => parkingOrderService.AddParkingOrder(parkingOrder2));
-
+            var response = await Assert.ThrowsAsync<NoSpaceException>(() => parkingOrderService.AddParkingOrder(parkingOrder2));
+            Assert.Equal("The parking lot is full", response.Message);
         }
 
         private ParkingLotContext GetParkingLotContext()
