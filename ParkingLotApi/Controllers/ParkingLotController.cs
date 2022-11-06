@@ -26,11 +26,17 @@ namespace ParkingLotApi.Controllers
         [HttpPost]
         public async Task<ActionResult<ParkingLotDto>> AddParkingLot(ParkingLotDto parkingLotDto)
         {
+            if (parkingLotDto.Capacity < 0)
+            {
+                return Accepted();
+            }
+
             var postParkingLotDto = _parkingLotService.AddParkingLot(parkingLotDto);
             if (postParkingLotDto == null)
             {
                 return Conflict();
             }
+
             return Ok(parkingLotDto);
         }
     }

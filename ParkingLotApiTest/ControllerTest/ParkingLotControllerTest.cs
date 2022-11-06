@@ -69,5 +69,24 @@ namespace ParkingLotApiTest.ControllerTest
             // then
             Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         }
+
+        [Fact]
+        public async Task Should_create_parkingLot_fail_when_capacity_is_out_of_range()
+        {
+            // given
+            var client = GetClient();
+            ParkingLotDto parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = -1,
+                Location = "Tus"
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            var content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            // when
+            var response = await client.PostAsync("/parkingLots", content);
+            // then
+            Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        }
     }
 }
