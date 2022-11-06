@@ -33,6 +33,12 @@ namespace ParkingLotApi.Services
                 .GetRange(startIndex, endIndex - startIndex);
         }
 
+        public async Task<ParkingLotDTO> GetParkingLot(int id)
+        {
+            var parkingLot = parkingLotContext.ParkingLots.FirstOrDefault(p => p.Id == id);
+            return parkingLot != null ? new ParkingLotDTO(parkingLot) : null;
+        }
+
         public async Task<int> AddNewParkingLot(ParkingLotDTO parkingLotDTO)
         {
             ParkingLotEntity parkingLotEntity = parkingLotDTO.ToEntity();
@@ -64,7 +70,5 @@ namespace ParkingLotApi.Services
         {
             return parkingLot.Capacity >= 0;
         }
-
-        
     }
 }

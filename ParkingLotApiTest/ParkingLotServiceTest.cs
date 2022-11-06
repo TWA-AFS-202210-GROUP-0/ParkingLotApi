@@ -80,8 +80,30 @@ public class ParkingLotServiceTest: TestBase
 
         // then
         Assert.Equal(3, parkingLotInPage.Count());
+    }
 
+    [Fact]
+    public async Task Should_get_one_parking_lot_detail()
+    {
+        // given
+        var context = GetParkingLotContext();
+        ParkingLotDTO parkingLotDTO = new ParkingLotDTO()
+        {
+            Name = "hi",
+            Capacity = 1,
+            Location = "hihi",
+        };
 
+        ParkingLotService parkingLotService = new ParkingLotService(context);
+        var id = await parkingLotService.AddNewParkingLot(parkingLotDTO);
+
+        // when
+        var parkingLot = await parkingLotService.GetParkingLot(id);
+
+        // then
+        Assert.Equal(parkingLotDTO.Name, parkingLot.Name);
+        Assert.Equal(parkingLotDTO.Capacity, parkingLot.Capacity);
+        Assert.Equal(parkingLotDTO.Location, parkingLot.Location);
     }
 
     private ParkingLotContext GetParkingLotContext()
