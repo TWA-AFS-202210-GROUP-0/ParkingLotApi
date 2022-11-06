@@ -6,5 +6,5 @@ namespace ParkingLotApi.Services;
 public interface IParkingLotService
 {
     List<ParkingLotDto> GetAll();
-    ParkingLotDto AddParkingLot(ParkingLotDto parkingLotDto);
+    int AddParkingLot(ParkingLotDto parkingLotDto);
 }

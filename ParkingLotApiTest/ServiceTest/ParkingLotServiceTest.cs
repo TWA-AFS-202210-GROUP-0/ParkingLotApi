@@ -34,6 +34,51 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.Equal(1, context.ParkingLots.Count());
         }
 
+        [Fact]
+        public async Task Should_get_all_parkingLots_seccessfully_via_parkingLot_service()
+        {
+            // given
+            var context = GetParkingLotDbContext();
+            var parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            var parkingLotDto1 = new ParkingLotDto
+            {
+                Name = "TW",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            ParkingLotService parkingLotService = new ParkingLotService(context);
+            parkingLotService.AddParkingLot(parkingLotDto);
+            parkingLotService.AddParkingLot(parkingLotDto1);
+            // when
+            var parkingLotDtos = parkingLotService.GetAll();
+            // then
+            Assert.Equal(2, parkingLotDtos.Count());
+        }
+
+        [Fact]
+        public void Should_get_a_parkingLot_by_id_success()
+        {
+            // given
+            var context = GetParkingLotDbContext();
+            var parkingLotDto = new ParkingLotDto
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "Tus"
+            };
+            ParkingLotService parkingLotService = new ParkingLotService(context);
+            var id = parkingLotService.AddParkingLot(parkingLotDto);
+            // when
+            var parkingLotDtoWithSpecialId = parkingLotService.GetParkingLotById(id);
+            // then
+            Assert.Equal(parkingLotDto.Name, parkingLotDtoWithSpecialId.Name);
+        }
+
         private ParkingLotDbContext GetParkingLotDbContext()
         {
             var scope = Factory.Services.CreateScope();

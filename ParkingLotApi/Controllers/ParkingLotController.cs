@@ -31,8 +31,8 @@ namespace ParkingLotApi.Controllers
                 return Accepted();
             }
 
-            var postParkingLotDto = _parkingLotService.AddParkingLot(parkingLotDto);
-            if (postParkingLotDto == null)
+            var id = _parkingLotService.AddParkingLot(parkingLotDto);
+            if (id == -1)
             {
                 return Conflict();
             }
