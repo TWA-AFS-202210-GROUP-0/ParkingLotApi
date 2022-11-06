@@ -10,7 +10,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace ParkingLotApi.Controllers
 {
     [ApiController]
-    [Route("companies")]
+    [Route("parkinglot")]
     public class ParkingLotController : Controller
     {
         private readonly parkingLotService parkingLotService;
@@ -21,7 +21,7 @@ namespace ParkingLotApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ParkingLotDto>>> List([FromQuery] string pageIndex)
+        public async Task<ActionResult<IEnumerable<ParkingLotDto>>> List([FromQuery] string? pageIndex)
         {
             var ParkingLotDtos = await this.parkingLotService.GetAll();
 
