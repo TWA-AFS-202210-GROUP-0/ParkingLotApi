@@ -90,22 +90,14 @@ namespace ParkingLotApiTest.ControllerTest
                 Location = "536 South Forest Avenue",
                 Name = "South Forest"
             };
-            ParkingLotDto parkingLot2 = new ParkingLotDto
-            {
-                Capacity = 20,
-                Location = "55 North Paul",
-                Name = "North Paul"
-            };
             // when
-            var createdParkingLot =
-                await CreateParkinglotForTest(client, parkingLot.Location, parkingLot.Name, parkingLot.Capacity);
-            await client.PostAsync("ParkingLots", SerializedObject(parkingLot2));
-            await client.DeleteAsync($"ParkingLots/{createdParkingLot.ToEntity().Id}");
-            var response = await client.GetAsync("ParkingLots");
-            var parkinglots = await ParseObject<List<ParkingLotDto>>(response);
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            await client.DeleteAsync(response.Headers.Location);
+            var allParkingLotsresponse = await client.GetAsync("ParkingLots");
+            var parkinglots = await ParseObject<List<ParkingLotDto>>(allParkingLotsresponse);
             // then
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1, parkinglots.Count);
+            response.EnsureSuccessStatusCode();
+            Assert.Empty(parkinglots);
         }
 
 

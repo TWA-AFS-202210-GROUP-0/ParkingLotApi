@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ParkingLotApi.Dtos;
 using ParkingLotApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Collections.Generic;
 
 namespace ParkingLotApi.Services
 {
@@ -41,6 +44,37 @@ namespace ParkingLotApi.Services
             var parkingLot = await parkingLotDbcontext.ParkingLots.FirstOrDefaultAsync(
                 parkinglot => parkinglot.Id == id);
             return new ParkingLotDto(parkingLot);
+        }
+
+        public async Task DeleteParkingLot(int id)
+        {
+            var parkinglot = await parkingLotDbcontext.ParkingLots
+                .FirstOrDefaultAsync(parkinglot => parkinglot.Id == id);
+            parkingLotDbcontext.ParkingLots.Remove(parkinglot);
+            await parkingLotDbcontext.SaveChangesAsync();
+        }
+
+        public List<ParkingLotDto> GetParkingLots(int? pageIndex)
+        {
+            var parkingLotEntities = parkingLotDbcontext.ParkingLots.ToList();
+            var parkingLotDtos = parkingLotEntities.Select(parkinglotEntity => new ParkingLotDto(parkinglotEntity)).ToList();
+            if (pageIndex != null)
+            {
+                int lower = (pageIndex.Value - 1) * 15;
+                int upper = lower + 15;
+                if (upper <= parkingLotDbcontext.ParkingLots.Count())
+                {
+                    return parkingLotDtos.Skip(lower).Take(15).ToList();
+                }
+                else
+                {
+                    return parkingLotDtos.Skip(lower).Take(15 - upper + parkingLotDtos.Count).ToList();
+                }
+            }
+            else
+            {
+                return parkingLotDtos;
+            }
         }
     }
 }
