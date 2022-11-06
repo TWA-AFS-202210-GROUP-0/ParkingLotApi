@@ -26,6 +26,13 @@ namespace ParkingLotApiTest.ControllerTest
             Name = "South Forest"
         };
 
+        ParkingLotDto parkingLotMd = new ParkingLotDto
+        {
+            Capacity = 20,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest"
+        };
+
         ParkingLotDto parkingLot2 = new ParkingLotDto
         {
             Capacity = 20,
@@ -113,7 +120,7 @@ namespace ParkingLotApiTest.ControllerTest
         }
 
         [Fact]
-        public async Task Should_get_specific_existing_company_successfully()
+        public async Task Should_get_specific_existing_parkingLot_successfully()
         {
             // given
             var client = GetClient();
@@ -126,6 +133,19 @@ namespace ParkingLotApiTest.ControllerTest
             // then
             Assert.Equal(HttpStatusCode.OK, parkinglotResponse.StatusCode);
             Assert.Equivalent(parkingLot, queriedParkingLot);
+        }
+
+        [Fact]
+        public async Task Should_update_basic_info_parkingLot_successfully()
+        {
+            // given
+            var client = GetClient();
+            // when
+            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            var response = await client.PutAsync(responsePost.Headers.Location, SerializedObject(parkingLotMd));
+            var modifiedParkingLot = await ParseObject<ParkingLotDto>(response);
+            // then
+            Assert.Equivalent(parkingLotMd, modifiedParkingLot);
         }
 
         public async Task<T> ParseObject<T>(HttpResponseMessage response)
