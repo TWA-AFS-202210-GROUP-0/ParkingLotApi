@@ -10,5 +10,5 @@ public interface IParkingLotService
     Task<ParkingLotDto> GetParkingLotById(int parkingLotId);
     Task<ParkingLotDto> UpdateParkingLot(ParkingLotDto parkingLotDto);
     Task<List<ParkingLotDto>> GetMultiParkingLots(int skip, int take);
-    Task DeleteParkingLot(int id);
+    Task<string> DeleteParkingLot(int id, string name);
 }

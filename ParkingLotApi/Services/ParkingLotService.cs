@@ -34,9 +34,9 @@ namespace ParkingLotApi.Services
             return new List<ParkingLotDto>();
         }
 
-        public async Task DeleteParkingLot(int id)
+        public async Task<string> DeleteParkingLot(int id, string name)
         {
-            return;
+            return name;
         }
 
 

@@ -32,4 +32,12 @@ public class ParkingLotController : ControllerBase
             return new ConflictResult();
         }
     }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteParkingLot([FromRoute]int id,[FromQuery] string name)
+    {
+        await parkingLotService.DeleteParkingLot(id, name);
+
+        return new OkResult();
+    }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
+using MySqlConnector;
 using ParkingLotApi.Controllers;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Services;
@@ -55,7 +56,19 @@ namespace ParkingLotApiTest.ControllerTest
             });
             //Then
             Assert.IsType<ConflictResult>(actionResult.Result);
+        }
 
+        [Fact]
+        public async Task should_delete_parking_lot()
+        {
+            //Given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.DeleteParkingLot(It.IsAny<int>(),It.IsAny<string>())).ReturnsAsync("SLB");
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //when
+            var actionResult = await parkingLotController.DeleteParkingLot(1, "SLB");
+            //Then
+            Assert.IsType(typeof(OkResult),actionResult);
         }
     }
 }
