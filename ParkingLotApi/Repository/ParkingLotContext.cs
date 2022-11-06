@@ -3,9 +3,9 @@ using ParkingLotApi.Models;
 
 namespace ParkingLotApi.Repository
 {
-    public class ParkingContext : DbContext
+    public class ParkingDbContext : DbContext
     {
-        public ParkingContext(DbContextOptions<ParkingContext> options)
+        public ParkingDbContext(DbContextOptions<ParkingDbContext> options)
             : base(options)
         {
         }
