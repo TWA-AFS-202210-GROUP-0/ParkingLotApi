@@ -1,6 +1,6 @@
 ﻿using ParkingLotApi.Repository;
-using ParkingLotApiTest;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,6 +13,11 @@ namespace ParkingLotApi.Services
         public ParkingLotService(ParkingLotContext parkingLotContext)
         {
             this.parkingLotContext = parkingLotContext;
+        }
+
+        public async Task<List<ParkingLotDTO>> GetAllParkingLots()
+        {
+            return parkingLotContext.ParkingLots.Select(p => new ParkingLotDTO(p)).ToList();
         }
 
         public async Task<int> AddNewParkingLot(ParkingLotDTO parkingLotDTO)

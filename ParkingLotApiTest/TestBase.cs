@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using ParkingLotApiTest;
 using System.Net.Http;
 using System;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace ParkingLotApiTest
 {
@@ -29,6 +32,18 @@ namespace ParkingLotApiTest
         protected HttpClient GetClient()
         {
             return Factory.CreateClient();
+        }
+
+        protected StringContent CreateRequestBody(object obj)
+        {
+            var serializeObject = JsonConvert.SerializeObject(obj);
+            return new StringContent(serializeObject, Encoding.UTF8, "application/json");
+        }
+
+        protected async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
+        {
+            var responseBody = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(responseBody);
         }
     }
 }

@@ -1,12 +1,21 @@
 ﻿using ParkingLotApi.Repository;
 using System;
 
-namespace ParkingLotApiTest
+namespace ParkingLotApi
 {
     public class ParkingLotDTO
     {
+        private ParkingLotEntity p;
+
         public ParkingLotDTO()
         {
+        }
+
+        public ParkingLotDTO(ParkingLotEntity parkingLotEntity)
+        {
+            Name = parkingLotEntity.Name;
+            Capacity = parkingLotEntity.Capacity;
+            Location = parkingLotEntity.Location;
         }
 
         public string Name { get; set; }

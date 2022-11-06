@@ -1,4 +1,4 @@
-﻿namespace ParkingLotApi.Repository
+﻿namespace ParkingLotApi
 {
     public class ParkingLotEntity
     {
