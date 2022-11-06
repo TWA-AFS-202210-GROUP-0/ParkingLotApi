@@ -36,8 +36,14 @@ public class ParkingLotController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteParkingLot([FromRoute]int id,[FromQuery] string name)
     {
-        await parkingLotService.DeleteParkingLot(id, name);
-
-        return new OkResult();
+        try
+        {
+            await parkingLotService.DeleteParkingLot(id, name);
+            return new OkResult();
+        }
+        catch (NullReferenceException e)
+        {
+            return new NotFoundResult();
+        }
     }
 }

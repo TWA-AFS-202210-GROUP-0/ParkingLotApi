@@ -70,5 +70,20 @@ namespace ParkingLotApiTest.ControllerTest
             //Then
             Assert.IsType(typeof(OkResult),actionResult);
         }
+
+
+        [Fact]
+        public async Task should_fail_delete_parking_lot()
+        {
+            //Given
+            var parkingLotService = new Mock<IParkingLotService>();
+            parkingLotService.Setup(m => m.DeleteParkingLot(It.IsAny<int>(), It.IsAny<string>()))
+                .Throws<NullReferenceException>();
+            var parkingLotController = new ParkingLotController(parkingLotService.Object);
+            //when
+            var actionResult = await parkingLotController.DeleteParkingLot(1, "SLB");
+            //Then
+            Assert.IsType(typeof(NotFoundResult), actionResult);
+        }
     }
 }
