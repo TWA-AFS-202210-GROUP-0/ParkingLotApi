@@ -48,5 +48,39 @@ namespace ParkingLotApiTest.ServiceTest
             Assert.ThrowsAsync<DuplicateNameException>(async () => await ParkingLotService.AddParkingLot(parkingLotDto));
             Assert.Equal(1, ParkingDbContext.ParkingLots.Count());
         }
+
+        [Fact]
+        public async void Should_Get_parkingLot_by_id()
+        {
+            // given
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "TUSPark",
+            };
+            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            // when
+            var getParkingLotDto = await ParkingLotService.GetParkingLotById(newParkingLotDto);
+            // Then
+            Assert.Equal(parkingLotDto.Name, getParkingLotDto.Name);
+        }
+
+
+        [Fact]
+        public async void Should_throw_null_when_get_parkingLot_by_wrong_id()
+        {
+            // given
+            var parkingLotDto = new ParkingLotDto()
+            {
+                Name = "SLB",
+                Capacity = 10,
+                Location = "TUSPark",
+            };
+            var newParkingLotDto = await ParkingLotService.AddParkingLot(parkingLotDto);
+            // Then
+            Assert.ThrowsAsync<NullReferenceException>(async () =>
+                await ParkingLotService.GetParkingLotById(newParkingLotDto - 1));
+        }
     }
 }

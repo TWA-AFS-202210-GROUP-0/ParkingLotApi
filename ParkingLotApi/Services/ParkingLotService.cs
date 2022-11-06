@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ParkingLotApi.Dto;
 using ParkingLotApi.Repository;
 
@@ -30,7 +32,13 @@ namespace ParkingLotApi.Services
 
         public async Task<ParkingLotDto> GetParkingLotById(int parkingLotId)
         {
-            return new ParkingLotDto();
+            var parkingLotEntity = await _parkingDbContext.ParkingLots.SingleOrDefaultAsync(e => e.Id == parkingLotId);
+            if (parkingLotEntity !=null)
+            {
+                return DtoConverter.ToDto(parkingLotEntity);
+            }
+
+            throw new NullReferenceException();
         }
 
         public async Task<ParkingLotDto> UpdateParkingLot(int id, ParkingLotDto parkingLotDto)
