@@ -19,18 +19,32 @@ namespace ParkingLotApiTest.ControllerTest
         {
         }
 
+        ParkingLotDto parkingLot = new ParkingLotDto
+        {
+            Capacity = 10,
+            Location = "536 South Forest Avenue",
+            Name = "South Forest"
+        };
+
+        ParkingLotDto parkingLot2 = new ParkingLotDto
+        {
+            Capacity = 20,
+            Location = "55 Paul Avenue",
+            Name = "Paul"
+        };
+
+        ParkingLotDto parkingLot3 = new ParkingLotDto
+        {
+            Capacity = 30,
+            Location = "12306 D Avenue",
+            Name = "D"
+        };
 
         [Fact]
         public async Task Should_add_parking_lot_success()
         {
             // given
             var client = GetClient();
-            ParkingLotDto parkingLot = new ParkingLotDto
-            {
-                Capacity = 10,
-                Location = "536 South Forest Avenue",
-                Name = "South Forest"
-            };
             // when
             var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
             var createdParkingLot = await ParseObject<ParkingLotDto>(response);
@@ -43,12 +57,6 @@ namespace ParkingLotApiTest.ControllerTest
         {
             // given
             var client = GetClient();
-            ParkingLotDto parkingLot = new ParkingLotDto
-            {
-                Capacity = -20,
-                Location = "536 South Forest Avenue",
-                Name = "South Forest"
-            };
             // when
             var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
             // then
@@ -60,21 +68,9 @@ namespace ParkingLotApiTest.ControllerTest
         {
             // given
             var client = GetClient();
-            ParkingLotDto parkingLot = new ParkingLotDto
-            {
-                Capacity = 10,
-                Location = "536 South Forest Avenue",
-                Name = "South Forest"
-            };
-            ParkingLotDto parkingLot2 = new ParkingLotDto
-            {
-                Capacity = 10,
-                Location = "536 South Forest Avenue",
-                Name = "South Forest"
-            };
             // when
             await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
-            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot2));
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
             // then
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
@@ -91,15 +87,46 @@ namespace ParkingLotApiTest.ControllerTest
                 Name = "South Forest"
             };
             // when
-            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
-            await client.DeleteAsync(response.Headers.Location);
+            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            var response = await client.DeleteAsync(responsePost.Headers.Location);
             var allParkingLotsresponse = await client.GetAsync("ParkingLots");
             var parkinglots = await ParseObject<List<ParkingLotDto>>(allParkingLotsresponse);
             // then
-            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent,response.StatusCode);
             Assert.Empty(parkinglots);
         }
 
+        [Fact]
+        public async Task Should_query_all_parkinglots_in_pagesize_15()
+        {
+            // given
+            var client = GetClient();
+            // when
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot2));
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot3));
+            var allParkingLotsresponse = await client.GetAsync("ParkingLots?pageIndex=1");
+            var parkinglots = await ParseObject<List<ParkingLotDto>>(allParkingLotsresponse);
+            // then
+            Assert.Equal(HttpStatusCode.OK, allParkingLotsresponse.StatusCode);
+            Assert.Equal(3, parkinglots.Count);
+        }
+
+        [Fact]
+        public async Task Should_get_specific_existing_company_successfully()
+        {
+            // given
+            var client = GetClient();
+            // when
+            var response = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot2));
+            await client.PostAsync("ParkingLots", SerializedObject(parkingLot3));
+            var parkinglotResponse = await client.GetAsync(response.Headers.Location);
+            var queriedParkingLot = await ParseObject<ParkingLotDto>(parkinglotResponse);
+            // then
+            Assert.Equal(HttpStatusCode.OK, parkinglotResponse.StatusCode);
+            Assert.Equivalent(parkingLot, queriedParkingLot);
+        }
 
         public async Task<T> ParseObject<T>(HttpResponseMessage response)
         {

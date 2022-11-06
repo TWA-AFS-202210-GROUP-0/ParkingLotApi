@@ -40,7 +40,7 @@ namespace ParkingLotApi.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             await parkingLotService.DeleteParkingLot(id);
-            return this.NoContent();
+            return NoContent();
         }
 
         [HttpGet]
