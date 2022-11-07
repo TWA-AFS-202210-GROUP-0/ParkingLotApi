@@ -78,7 +78,7 @@ namespace ParkingLotApiTest.ControllerTest
             };
             var response = await client.PostAsJsonAsync("/parkinglots", newParkingLot);
             //Given 2
-            var createResponse = await client.PostAsJsonAsync("parkinglots/1/parkingorders/",
+            var createResponse = await client.PostAsJsonAsync("parkinglots/1/orders/",
                 new ParkingOrderDto() { PlateNumber = "12345" });
             var body = await createResponse.Content.ReadAsStringAsync();
             var result = await JsonConvert.DeserializeObjectAsync<ParkingOrderDto>(body);

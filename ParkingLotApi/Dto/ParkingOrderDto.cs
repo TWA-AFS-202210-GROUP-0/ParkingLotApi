@@ -5,8 +5,8 @@ namespace ParkingLotApi.Dto
 {
     public class ParkingOrderDto
     {
-        public int Id { get; set; }
-        public string NameOfParkingLot { get; set; }
+        public int? Id { get; set; }
+        public string? NameOfParkingLot { get; set; }
 
         [StringLength(5)]
         [Required]
