@@ -19,6 +19,7 @@ namespace ParkingLotApi.Dto
         {
             return new ParkingLotDto()
             {
+                Id = parkingLotEntity.Id,
                 Name = parkingLotEntity.Name,
                 Capacity = parkingLotEntity.Capacity,
                 Location = parkingLotEntity.Location,

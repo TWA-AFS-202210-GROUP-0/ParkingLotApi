@@ -52,8 +52,8 @@ public class ParkingLotController : ControllerBase
         }
     }
 
-    [HttpGet("{pageIndex}")]
-    public async Task<ActionResult<List<ParkingLotDto>>> Get15ParkingLotsOnePage([FromRoute] int pageIndex)
+    [HttpGet]
+    public async Task<ActionResult<List<ParkingLotDto>>> Get15ParkingLotsOnePage([FromQuery] int pageIndex)
     {
         if (pageIndex < 1)
         {
