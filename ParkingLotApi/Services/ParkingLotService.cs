@@ -92,6 +92,7 @@ namespace ParkingLotApi.Services
             var orderEntity = new OrderEntity
             {
                 OrderNumber = Guid.NewGuid().ToString(),
+                ParkingLotId = id,
                 ParkingLotName = parkingLot.Name,
                 PlateNumber = car,
                 CreationTime = DateTime.Now,
@@ -106,7 +107,7 @@ namespace ParkingLotApi.Services
         {
             var parkingLot = GetParkingLot(id);
             return parkingLotContext.Orders
-                .Where(o => o.Id == id)
+                .Where(o => o.ParkingLotId == id)
                 .Where(o => o.Status).Count() >= parkingLot.Capacity;
         }
 

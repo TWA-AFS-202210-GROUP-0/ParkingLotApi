@@ -163,7 +163,7 @@ namespace ParkingLotApiTest.ControllerTest
             Assert.NotNull(order.CreationTime);
         }
 
-        [Fact(Skip = "stange")]
+        [Fact]
         public async Task Should_not_park_one_car_in_parking_lot_when_lot_is_at_capacity()
         {
             // given

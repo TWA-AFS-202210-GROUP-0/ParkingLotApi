@@ -13,6 +13,8 @@ namespace ParkingLotApi
 
         public string OrderNumber { get; set; }
 
+        public int ParkingLotId { get; set; }
+
         public string ParkingLotName { get; set; }
 
         public string PlateNumber { get; set; }
