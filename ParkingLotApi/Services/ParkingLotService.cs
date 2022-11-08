@@ -39,6 +39,18 @@ namespace ParkingLotApi.Services
             }
         }
 
+        public async Task<ParkingOrderDto> GetOrderById(int id)
+        {
+            var parkingOrder = await parkingLotDbcontext.Orders.FirstOrDefaultAsync(_ => _.Id == id);
+            if (parkingOrder != null)
+            {
+                return new ParkingOrderDto(parkingOrder);
+            }
+            else
+            {
+                return null;
+            }
+        }
         public async Task<ParkingLotDto> GetById(int id)
         {
             var parkingLot = await parkingLotDbcontext.ParkingLots.FirstOrDefaultAsync(
@@ -60,8 +72,8 @@ namespace ParkingLotApi.Services
             if (parkingLot != null)
             {
                 parkingLot.Capacity = parkingLotDto.Capacity;
-                //await parkingLotDbcontext.ParkingLots.AddAsync(parkingLot);
-                //await parkingLotDbcontext.SaveChangesAsync();
+                parkingLotDbcontext.ParkingLots.Update(parkingLot);
+                await parkingLotDbcontext.SaveChangesAsync();
                 return new ParkingLotDto(parkingLot);
             }
             else
@@ -79,8 +91,8 @@ namespace ParkingLotApi.Services
                 var orderNumber = parkingLotDto.ParkingOrderDto.Where(_ => _.OrderStatus == OrderStatus.OPEN).ToList().Count;
                 parkingLot.Availibility = parkingLot.Capacity - orderNumber;
                 parkingLot.ParkingOrder = parkingLotDto.ParkingOrderDto.Select(_ => _.ToEntity()).ToList();
-               // await parkingLotDbcontext.ParkingLots.AddAsync(parkingLot);
-               // await parkingLotDbcontext.SaveChangesAsync();
+                parkingLotDbcontext.ParkingLots.Update(parkingLot);
+                await parkingLotDbcontext.SaveChangesAsync();
                 return new ParkingLotDto(parkingLot);
             }
             else

@@ -20,11 +20,11 @@ namespace ParkingLotApi.Dtos
         }
 
         public int Number { get; set; }
-        public string NameOfParkingLot { get; set; }
+        public string? NameOfParkingLot { get; set; }
         public string CarPlateNumber { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime? CreateTime { get; set; }
         public DateTime? CloseTime { get; set; }
-        public OrderStatus OrderStatus { get; set; }
+        public OrderStatus OrderStatus { get; set; } = OrderStatus.OPEN;
 
         public ParkingOrderEntity ToEntity()
         {

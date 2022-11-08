@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
 using ParkingLotApi.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ParkingLotApiTest.ControllerTest
 {
@@ -163,6 +164,11 @@ namespace ParkingLotApiTest.ControllerTest
             },
         };
 
+        private ParkingOrderDto newOrder = new ParkingOrderDto()
+        {
+            CarPlateNumber = "WPLKS",
+        };
+
         ParkingLotDto parkingLot2 = new ParkingLotDto
         {
             Capacity = 20,
@@ -195,12 +201,18 @@ namespace ParkingLotApiTest.ControllerTest
             // given
             var client = GetClient();
             // when
-            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
-            var url = responsePost.Headers.Location + "/orders";
-            var response = await client.PutAsync(url, SerializedObject(parkingLotwithOrder));
-            var createdParkingLot = await ParseObject<ParkingLotDto>(response);
+            var responseParkingLot =
+                await CreateParkinglotForTest(client, parkingLot.Location, parkingLot.Name, parkingLot.Capacity);
+            var url = responseParkingLot.Headers.Location + "/orders";
+            var responsePost = await client.PostAsync(url, SerializedObject(newOrder));
+            var createdParkingOrder = await ParseObject<ParkingOrderDto>(responsePost);
+            var responseGet = await client.GetAsync(responseParkingLot.Headers.Location);
+            var queriedParkingLot = await ParseObject<ParkingLotDto>(responseGet);
             // then
-            Assert.Equivalent(parkingLotwithOrder, createdParkingLot);
+            Assert.Equal("WPLKS", createdParkingOrder.CarPlateNumber);
+            Assert.Equal(parkingLot.Name, createdParkingOrder.NameOfParkingLot);
+            Assert.Equal(OrderStatus.OPEN, createdParkingOrder.OrderStatus);
+            Assert.Equal(1, queriedParkingLot.ParkingOrderDto.Count);
         }
 
         [Fact]
@@ -209,13 +221,16 @@ namespace ParkingLotApiTest.ControllerTest
             // given
             var client = GetClient();
             // when
-            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLot));
-            var url = responsePost.Headers.Location + "/orders";
-            var responsePut = await client.PutAsync(url, SerializedObject(parkingLotwithClosedOrderBefore));
-            var response = await client.PutAsync(url, SerializedObject(parkingLotwithClosedOrderAfter));
-            var createdParkingLot = await ParseObject<ParkingLotDto>(response);
+            var responseParkingLot =
+                await CreateParkinglotForTest(client, parkingLot.Location, parkingLot.Name, parkingLot.Capacity);
+            var url = responseParkingLot.Headers.Location + "/orders";
+            var responsePost = await client.PostAsync(url, SerializedObject(newOrder));
+            var urlOrder = responsePost.Headers.Location;
+            var response = await client.PutAsync(urlOrder, SerializedObject(newOrder));
+            var createdParkingOrder = await ParseObject<ParkingOrderDto>(response);
             // then
-            Assert.Equivalent(parkingLotwithClosedOrderAfter, createdParkingLot);
+            response.EnsureSuccessStatusCode();
+            Assert.Equivalent(OrderStatus.CLOSE, createdParkingOrder.OrderStatus);
         }
 
         [Fact]
@@ -224,13 +239,19 @@ namespace ParkingLotApiTest.ControllerTest
             // given
             var client = GetClient();
             // when
-            var responsePost = await client.PostAsync("ParkingLots", SerializedObject(parkingLotwithFull));
-            var url = responsePost.Headers.Location + "/orders";
-            var responsePut = await client.PutAsync(url, SerializedObject(parkingLotwithFullBefore));
-            var response = await client.PutAsync(url, SerializedObject(parkingLotwithFullAfter));
-            // then
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            //Assert.Equal("The Parking Lot is Full!", response.Headers.Warning);
+            var responseParkingLot =
+                await CreateParkinglotForTest(client, parkingLot.Location, parkingLot.Name, 1);
+            var url = responseParkingLot.Headers.Location + "/orders";
+            await client.PostAsync(url, SerializedObject(newOrder));
+            var responsePost = await client.PostAsync(url, SerializedObject(newOrder));
+            var exception =  await responsePost.Content.ReadAsStringAsync();
+            //FullParkingLotException exception1 = 
+            //  await Assert.ThrowsAsync<FullParkingLotException>(
+            //  () => client.PostAsync(url, SerializedObject(newOrder)).Result.Content.ReadAsStringAsync());
+            // Assert.Equal(HttpStatusCode.InternalServerError, responsePost.StatusCode);
+            Console.WriteLine(exception);
+            Assert.Equal(HttpStatusCode.Conflict, responsePost.StatusCode);
+            Assert.Equal("The parking lot is full!", exception);
 
         }
 
@@ -343,7 +364,7 @@ namespace ParkingLotApiTest.ControllerTest
             return postBodyOne;
         }
 
-        public async Task<ParkingLotDto> CreateParkinglotForTest(HttpClient httpClient, string location, string name, int capacity)
+        public async Task<HttpResponseMessage> CreateParkinglotForTest(HttpClient httpClient, string location, string name, int capacity)
         {
             var parkingLot = new ParkingLotDto();
             parkingLot.Capacity = capacity;
@@ -351,8 +372,8 @@ namespace ParkingLotApiTest.ControllerTest
             parkingLot.Location = location;
             var postBody = SerializedObject(parkingLot);
             var response = await httpClient.PostAsync("ParkingLots", postBody);
-            var result = await ParseObject<ParkingLotDto>(response);
-            return result;
+            //var result = await ParseObject<ParkingLotDto>(response);
+            return response;
         }
 
     }

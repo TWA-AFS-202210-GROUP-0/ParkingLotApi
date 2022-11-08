@@ -14,10 +14,12 @@ namespace ParkingLotApi.Controllers
     public class ParkingLotsController : ControllerBase
     {
         private readonly ParkingLotService parkingLotService;
+        private readonly ParkingOrderService parkingOrderService;
 
-        public ParkingLotsController(ParkingLotService parkingLotService)
+        public ParkingLotsController(ParkingLotService parkingLotService, ParkingOrderService parkingOrderService)
         {
             this.parkingLotService = parkingLotService;
+            this.parkingOrderService = parkingOrderService;
         }
 
         [HttpPost]
@@ -37,21 +39,24 @@ namespace ParkingLotApi.Controllers
             return parkingLot != null ? parkingLot : NotFound();
         }
 
-        [HttpPut("{id}/orders")]
-        public async Task<ActionResult<ParkingLotDto>> UpdateParkingLotOrderById(
-            [FromRoute] int id, [FromBody] ParkingLotDto parkingLotDto)
+        [HttpPost("{id}/orders")]
+        public async Task<ActionResult<ParkingOrderDto>> CrateParkingLotOrderById(
+            [FromRoute] int id, [FromBody] ParkingOrderDto parkingOrderDto)
         {
-            var parkingLot = await parkingLotService.UpdateOrderById(id, parkingLotDto);
-            if (parkingLot != null)
+            var parkingOrder = await this.parkingOrderService.AddNewOrder(id, parkingOrderDto);
+            return parkingOrder != null
+                ? Created($"ParkingLots/{id}/orders/{parkingOrder.Number}", parkingOrder)
+                : BadRequest();
+        }
+
+        [HttpPut("{id}/orders/{orderNumber}")]
+        public async Task<ActionResult<ParkingOrderDto>> UpdateParkingLotOrderById(
+            [FromRoute] int id, [FromRoute] int orderNumber, [FromBody] ParkingOrderDto parkingOrderDto)
+        {
+            var parkingOrder = await parkingOrderService.CloseOrder(id, orderNumber, parkingOrderDto);
+            if (parkingOrder != null)
             {
-                if (parkingLot.Availibility > 0)
-                {
-                    return parkingLot;
-                }
-                else
-                {
-                    return BadRequest("The Parking Lot is Full!");
-                }
+                return Ok(parkingOrder);
             }
             else
             {
@@ -59,20 +64,19 @@ namespace ParkingLotApi.Controllers
             }
         }
 
-       // [HttpGet("{id}/orders")]
-       // public async Task<ActionResult<ParkingLotDto>> CreateParkingLotOrderById(
-       //     [FromRoute] int id, [FromBody] ParkingLotDto parkingLotDto)
-       // {
-       //     var parkingLot = await parkingLotService.UpdateOrderById(id, parkingLotDto);
-       //     return parkingLot != null ? parkingLot : NotFound();
-       // }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<ParkingLotDto>> GetById(int id)
         {
             var parkingLot = await parkingLotService.GetById(id);
             return parkingLot != null ? Ok(parkingLot) : NotFound();
         }
+
+      // [HttpGet("{parkingLotid}/orders/{id}")]
+      // public async Task<ActionResult<ParkingLotDto>> GetOrderById(int parkingLotid, int id)
+      // {
+      //     var parkingLot = await parkingLotService.GetById(id);
+      //     return parkingLot != null ? Ok(parkingLot) : NotFound();
+      // }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
