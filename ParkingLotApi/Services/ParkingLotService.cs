@@ -111,19 +111,20 @@ namespace ParkingLotApi.Services
 
         public List<ParkingLotDto> GetParkingLots(int? pageIndex)
         {
+            int pageSize = 15;
             var parkingLotEntities = parkingLotDbcontext.ParkingLots.ToList();
             var parkingLotDtos = parkingLotEntities.Select(parkinglotEntity => new ParkingLotDto(parkinglotEntity)).ToList();
             if (pageIndex != null)
             {
-                int lower = (pageIndex.Value - 1) * 15;
-                int upper = lower + 15;
+                int lower = (pageIndex.Value - 1) * pageSize;
+                int upper = lower + pageSize;
                 if (upper <= parkingLotDbcontext.ParkingLots.Count())
                 {
-                    return parkingLotDtos.Skip(lower).Take(15).ToList();
+                    return parkingLotDtos.Skip(lower).Take(pageSize).ToList();
                 }
                 else
                 {
-                    return parkingLotDtos.Skip(lower).Take(15 - upper + parkingLotDtos.Count).ToList();
+                    return parkingLotDtos.Skip(lower).Take(pageSize - upper + parkingLotDtos.Count).ToList();
                 }
             }
             else
